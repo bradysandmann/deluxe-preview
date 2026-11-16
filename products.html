@@ -117,6 +117,30 @@
         const v = { front: `assets/img/${item.front}`, back: `assets/img/${item.back}`, label: item.name, shape };
         if (stage.showroom) stage.showroom.set(v); else Object.assign(stage.dataset, v);
       };
+      // "Open the pack": the pack spins once with a burst of powder, and what is in one stick appears on the stage.
+      // Every figure comes from the label data above; nothing here is typed by hand.
+      const inside = [
+        ...I.facts.filter(([n]) => /^(Sodium|Potassium|Magnesium|Caffeine|L-Theanine)/.test(n))
+          .map(([n, amount]) => [amount, n.replace(/ \(.*\)$/, '').replace('L-Theanine', 'L-theanine').toLowerCase().replace('l-theanine', 'L-theanine')]),
+        ['100% DV', 'vitamin C and four B vitamins'],
+      ];
+      console.assert(inside.length === 6, 'expected six items for the open pack list');
+      stage.addEventListener('showroom:mount', () => {
+        const pin = stage.querySelector('.showroom__pin');
+        pin.insertAdjacentHTML('beforeend', `
+          <ul class="inside" data-inside aria-label="In one stick" hidden>${inside.map(([a, n]) => `<li><b>${esc(a)}</b>${esc(n)}</li>`).join('')}</ul>
+          <button class="btn btn--ghost btn--sm pdp__open" type="button" data-open-pack aria-expanded="false">Open the pack</button>`);
+        const list = pin.querySelector('[data-inside]');
+        const openBtn = pin.querySelector('[data-open-pack]');
+        openBtn.addEventListener('click', () => {
+          const opening = list.hidden;
+          if (opening) stage.showroom.open();
+          list.hidden = !opening;
+          openBtn.setAttribute('aria-expanded', String(opening));
+          openBtn.textContent = opening ? 'Close the pack' : 'Open the pack';
+        });
+      });
+
       const stickBtn = $('[data-stick-toggle]');
       let pack = products[0];
       let showingStick = false;

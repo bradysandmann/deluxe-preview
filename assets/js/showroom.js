@@ -374,6 +374,9 @@ function mount(el) {
       <button class="showroom__arrow showroom__arrow--prev" type="button" aria-label="Turn left">${chevron('M15 5l-7 7 7 7')}</button>
       <button class="showroom__arrow showroom__arrow--next" type="button" aria-label="Turn right">${chevron('M9 5l7 7-7 7')}</button>
       <p class="showroom__meta"><span class="showroom__label"></span><span class="showroom__side" data-side aria-live="polite">Front</span></p>
+      <button class="showroom__zoom" type="button" aria-pressed="false" aria-label="Magnify the label">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM15.5 15.5 20 20M10.5 8v5M8 10.5h5"/></svg>
+      </button>
     </div>`;
   const pin = el.querySelector('.showroom__pin');
   const stage = el.querySelector('.showroom__stage');
@@ -390,6 +393,8 @@ function mount(el) {
     scroll: 0, scrollNow: 0,      // the turn the page scroll asks for, and the eased value drawn
     visible: false, cssW: 0, cssH: 0, bg: '#0c0c0d', pinTop: 0, F: 1.6, rise: 0.565, box: BOX.pouch,
     pack: null, G: null, sig: '', frames: 0, phase: Math.random() * 20, drag: null, gen: 0, disposed: false,
+    roll: 0, packScale: 1,        // the stick lies flat when its back faces us (its label runs along its length)
+    zoom: false, lensAt: null, lensImg: {},
   };
 
   // the side named is where the pack is heading, so an arrow press reads out its destination at once
@@ -397,6 +402,7 @@ function mount(el) {
   const showSide = () => {
     const name = facing();
     if (side.textContent !== name) side.textContent = name;
+    if (el.dataset.facing !== name) el.dataset.facing = name; // the flat fallback lays the stick down from this too
     const src = name === 'Front' ? s.front : s.back;
     if (el.dataset.mode === 'flat' && src && flatImg.getAttribute('src') !== src) {
       flatImg.src = src;
@@ -415,9 +421,11 @@ function mount(el) {
     wake();
   };
 
-  /* scroll: how far the page has carried this showroom, turned into an angle */
+  /* scroll: how far the page has carried this showroom, turned into an angle.
+     OFF unless the element says data-scroll="on": the client found the pack turning with the page
+     "weird to have them attached" (2026-11-16). The pack now turns only by drag, arrows or keys. */
   const measure = () => {
-    if (still()) { s.scroll = 0; return; }
+    if (still() || el.dataset.scroll !== 'on') { s.scroll = 0; return; }
     const r = el.getBoundingClientRect();
     if (layout === 'feature') {
       const track = r.height - pin.offsetHeight;
@@ -453,6 +461,7 @@ function mount(el) {
 
   /* drag: pointer events; touch-action: pan-y in the CSS leaves vertical swipes to the page */
   stage.addEventListener('pointerdown', (e) => {
+    if (s.zoom) return; // while the magnifier is on, the pointer moves the lens, not the pack
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     try { stage.setPointerCapture(e.pointerId); } catch { /* a scripted event has no live pointer to capture */ }
     s.drag = { x: e.clientX, t: e.timeStamp, v: 0 };
@@ -482,11 +491,145 @@ function mount(el) {
   el.querySelector('.showroom__arrow--prev').addEventListener('click', () => turn(-1), on);
   el.querySelector('.showroom__arrow--next').addEventListener('click', () => turn(1), on);
   el.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && s.zoom) { setZoom(false); return; }
     const dir = { ArrowLeft: -1, ArrowRight: 1 }[e.key];
     if (!dir) return;
     e.preventDefault();
     turn(dir);
   }, on);
+
+  /* magnifier: a lens that follows the pointer and shows the real label art enlarged.
+     It draws from the art file itself (not the 3D frame), so it is as sharp as the source render allows. */
+  const zoomBtn = el.querySelector('.showroom__zoom');
+  let lens = null, lctx = null; // made on first use, on <body> and fixed: no header or stage edge can cover or clip it
+  const hideLens = () => { s.lensAt = null; if (lens) lens.hidden = true; };
+  const LENS = 250, MAG = 3.2;
+  const art = (src) => {
+    let im = s.lensImg[src];
+    if (!im) { im = s.lensImg[src] = new Image(); im.decoding = 'async'; im.onload = () => paintLens(); im.src = src; }
+    return im;
+  };
+  const paintLens = () => {
+    const p = s.lensAt;
+    if (!p || !s.zoom || !lens) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    if (lens.width !== LENS * dpr) lens.width = lens.height = LENS * dpr;
+    const im = art(facing() === 'Front' ? s.front : s.back);
+    lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    lctx.fillStyle = s.bg;
+    lctx.fillRect(0, 0, LENS, LENS);
+    if (im.complete && im.naturalWidth) {
+      // where the art sits on the stage: centred, one pack-height tall (the same box the flat fallback uses)
+      const H = (s.cssH / s.F) * s.packScale, W = (H * im.naturalWidth) / im.naturalHeight;
+      const cx = s.cssW / 2, cy = (1 - s.rise) * s.cssH;
+      lctx.translate(LENS / 2 + MAG * (cx - p.x), LENS / 2 + MAG * (cy - p.y));
+      lctx.rotate(-s.roll); // canvas angles run clockwise, the scene's run the other way
+      lctx.scale(MAG, MAG);
+      lctx.imageSmoothingQuality = 'high';
+      lctx.drawImage(im, -W / 2, -H / 2, W, H);
+    }
+    lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    lctx.strokeStyle = 'rgba(255,255,255,.85)';
+    lctx.lineWidth = 2;
+    const C = 22, a = 1, b = LENS - 1; // the frame follows the chamfered corners the CSS clips
+    lctx.beginPath();
+    lctx.moveTo(C, a); lctx.lineTo(b, a); lctx.lineTo(b, b - C); lctx.lineTo(b - C, b); lctx.lineTo(a, b); lctx.lineTo(a, C);
+    lctx.closePath();
+    lctx.stroke();
+    const keep = (v, max) => Math.max(4, Math.min(max - LENS - 4, v));
+    lens.style.left = `${keep(p.cx - LENS / 2, innerWidth)}px`;
+    lens.style.top = `${keep(p.cy - LENS / 2 - (p.touch ? LENS * 0.62 : 0), innerHeight)}px`; // above a finger, centred on a mouse
+    lens.hidden = false;
+  };
+  const setZoom = (want) => {
+    s.zoom = !!want;
+    el.classList.toggle('is-zooming', s.zoom);
+    zoomBtn.setAttribute('aria-pressed', String(s.zoom));
+    zoomBtn.setAttribute('aria-label', s.zoom ? 'Close the magnifier' : 'Magnify the label');
+    if (s.zoom && !lens) {
+      lens = document.createElement('canvas');
+      lens.className = 'showroom__lens';
+      lens.hidden = true;
+      lens.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(lens);
+      lctx = lens.getContext('2d');
+    }
+    if (s.zoom) { // square the pack up to the face it is showing and hold it still
+      s.vel = 0;
+      s.goal = Math.round((s.goal ?? s.u) / Math.PI) * Math.PI;
+      if (still() || el.dataset.mode === 'flat') { s.u = s.goal; s.goal = null; }
+    } else hideLens();
+    s.sig = '';
+    showSide();
+    wake();
+  };
+  const lensMove = (e) => {
+    if (!s.zoom) return;
+    const r = stage.getBoundingClientRect();
+    s.lensAt = { x: e.clientX - r.left, y: e.clientY - r.top, cx: e.clientX, cy: e.clientY, touch: e.pointerType !== 'mouse' };
+    paintLens();
+  };
+  zoomBtn.addEventListener('click', () => setZoom(!s.zoom), on);
+  stage.addEventListener('pointermove', lensMove, on);
+  stage.addEventListener('pointerdown', lensMove, on);
+  // a mouse that leaves takes the lens with it; a lifted finger leaves the lens where it was, to be read
+  stage.addEventListener('pointerleave', (e) => { if (s.zoom && e.pointerType === 'mouse') hideLens(); }, on);
+  addEventListener('scroll', hideLens, { passive: true, signal: gone.signal }); // the page moved under a fixed lens
+
+  /* powder: a burst from the top of the pack, drawn on its own 2D layer over the stage (see open()) */
+  const burst = () => {
+    if (still() || !s.cssW) return;
+    const layer = document.createElement('canvas');
+    layer.className = 'showroom__burst';
+    const dpr = Math.min(devicePixelRatio || 1, 2), W = s.cssW, Hh = s.cssH;
+    layer.width = W * dpr; layer.height = Hh * dpr;
+    pin.appendChild(layer);
+    const g = layer.getContext('2d');
+    const packH = s.cssH / s.F, ox = W / 2, oy = (1 - s.rise) * Hh - packH * 0.4; // the top seal
+    const grains = Array.from({ length: 260 }, () => {
+      const a = -Math.PI / 2 + (Math.random() - 0.5) * 2.3, v = 240 + Math.random() * 660;
+      return { x: ox + (Math.random() - 0.5) * packH * 0.5, y: oy, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: 0.8 + Math.random() * 2.4, life: 1.3 + Math.random() * 1.3 };
+    });
+    const puffs = Array.from({ length: 9 }, (_, i) => ({ x: ox + (i - 4) * packH * 0.07, y: oy, vx: (i - 4) * 26, vy: -70 - Math.random() * 90, r: 26 + Math.random() * 30, life: 1.6 + Math.random() * 0.9 }));
+    const t0 = performance.now();
+    let last = t0;
+    const frame = (now) => {
+      const dt = Math.min(0.05, (now - last) / 1000), age = (now - t0) / 1000;
+      last = now;
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.clearRect(0, 0, W, Hh);
+      for (const p of puffs) {
+        p.x += p.vx * dt; p.y += p.vy * dt; p.r += 46 * dt;
+        const k = Math.max(0, 1 - age / p.life);
+        if (!k) continue;
+        const grad = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+        grad.addColorStop(0, `rgba(255,255,255,${0.16 * k})`);
+        grad.addColorStop(1, 'rgba(255,255,255,0)');
+        g.fillStyle = grad;
+        g.beginPath(); g.arc(p.x, p.y, p.r, 0, 6.2832); g.fill();
+      }
+      for (const p of grains) {
+        p.vy += 900 * dt; p.vx *= 1 - 1.4 * dt; p.vy *= 1 - 0.5 * dt;
+        p.x += p.vx * dt; p.y += p.vy * dt;
+        const k = Math.max(0, 1 - age / p.life);
+        if (!k) continue;
+        g.fillStyle = `rgba(255,255,255,${0.9 * k})`;
+        g.beginPath(); g.arc(p.x, p.y, p.r, 0, 6.2832); g.fill();
+      }
+      if (age < 2.7 && !s.disposed) requestAnimationFrame(frame); else layer.remove();
+    };
+    requestAnimationFrame(frame);
+  };
+  // open(): one full turn and a burst of powder; the page shows what is inside (see products.html)
+  const open = () => {
+    if (s.zoom) setZoom(false);
+    s.goal = (Math.round((s.goal ?? s.u) / (2 * Math.PI)) + 1) * 2 * Math.PI;
+    s.vel = 0;
+    if (still() || el.dataset.mode === 'flat') { s.u = s.goal; s.goal = null; }
+    showSide();
+    wake();
+    burst();
+  };
 
   /* drawing */
   s.flat = () => { el.dataset.mode = 'flat'; s.u = Math.round(s.u / Math.PI) * Math.PI; s.goal = null; s.vel = 0; showSide(); };
@@ -494,10 +637,16 @@ function mount(el) {
   const draw = (now) => {
     const G = s.G, w = canvas.width, h = canvas.height;
     if (!G || G.dead || !s.pack || !s.cssW) return;
-    const idle = still() ? 0 : 1;
+    const idle = still() || s.zoom ? 0 : 1; // the pack holds still under the magnifier
     const t = now / 1000 + s.phase;
     const bob = idle * Math.sin(t * 1.1) * 0.013;
     const angle = s.scrollNow + s.u + idle * Math.sin(t * 0.63) * 0.03;
+    // The stick's back label is printed along its length. As the back comes round, lay the stick on its
+    // side (a quarter turn clockwise) so the label reads left to right, and shrink it to fit the stage width.
+    const lay = s.shape === 'stick' ? (1 - Math.cos(angle)) / 2 : 0; // 0 facing front, 1 facing back
+    s.roll = (-lay * Math.PI) / 2;
+    // lying flat, its length must fit between the arrows, which the CSS parks at the stage edges (8 + 48 + 12 each side)
+    s.packScale = 1 - lay * (1 - Math.min(1.3, (s.cssW - 136) / ((s.cssH / s.F) * s.box.h)));
     const sig = `${w}x${h}|${angle.toFixed(4)}|${bob.toFixed(4)}`;
     if (sig === s.sig) return; // nothing moved: keep the frame already on the canvas
     s.sig = sig;
@@ -515,9 +664,12 @@ function mount(el) {
     camera.projectionMatrix.makePerspective(xmin * k, (xmin + Fw) * k, (ymin + F - camY) * k, (ymin - camY) * k, near, 60);
     camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
 
-    const { pivot, mirror, depth } = s.pack;
-    pivot.position.y = mirror.position.y = cy + bob;
+    const { pivot, mirror, roller, depth } = s.pack;
+    roller.position.y = mirror.position.y = cy + bob;
     pivot.rotation.y = mirror.rotation.y = angle;
+    roller.rotation.z = s.roll;
+    roller.scale.setScalar(s.packScale);
+    if (s.zoom && s.lensAt) paintLens(); // keep the lens true while the pack settles
     if (G.shown !== s.pack) { if (G.shown) G.shown.root.visible = false; s.pack.root.visible = true; G.shown = s.pack; }
 
     const U = room.uniforms;
@@ -603,10 +755,12 @@ function mount(el) {
     mirror.add(sheet(faces[0], false, true), sheet(faces[1], true, true));
     floor.scale.y = -1; // everything under it is the image in the floor
     floor.add(mirror);
-    root.add(pivot); // the floor mirror is built but never drawn: there is no floor
+    const roller = new THREE.Group(); // turns the pack in the plane of the screen (the stick lying flat), around its own middle
+    roller.add(pivot);
+    root.add(roller); // the floor mirror is built but never drawn: there is no floor
     root.visible = false;
     G.scene.add(root);
-    s.pack = { root, pivot, mirror, mats, front, back, shape, depth: Math.max(faces[0].depth, faces[1].depth) };
+    s.pack = { root, pivot, mirror, roller, mats, front, back, shape, depth: Math.max(faces[0].depth, faces[1].depth) };
     s.box = faces[0].box;
     fit();
     s.tick(0, performance.now()); // one frame now, on screen or not, so the canvas is never seen empty
@@ -614,7 +768,9 @@ function mount(el) {
 
   const set = ({ front = s.front, back = s.back, label = s.label, shape = s.shape } = {}) => {
     const changed = front !== s.front || back !== s.back || shape !== s.shape;
+    if (changed && s.zoom) setZoom(false);
     Object.assign(s, { front, back, label, shape: SHAPES[shape] ? shape : 'pouch' });
+    el.dataset.shape = s.shape;
     stage.setAttribute('aria-label', label);
     labelEl.textContent = label;
     if (!changed) return;
@@ -639,6 +795,7 @@ function mount(el) {
     seen.disconnect();
     gone.abort();
     dropPack();
+    if (lens) lens.remove();
     el.innerHTML = '';
     delete el.showroom;
   };
@@ -647,7 +804,9 @@ function mount(el) {
   measure();
   s.scrollNow = s.scroll;
   set({ front: el.dataset.front || '', back: el.dataset.back || '', label: el.dataset.label || 'Product', shape: el.dataset.shape || 'pouch' });
-  return (el.showroom = { set, turn, dispose });
+  el.showroom = { set, turn, dispose, open, zoom: setZoom };
+  el.dispatchEvent(new CustomEvent('showroom:mount', { bubbles: true })); // pages hang their own controls on this
+  return el.showroom;
 }
 
 window.DeluxeShowroom = { mount };

@@ -90,27 +90,6 @@
 .pdp .showroom__meta { top: auto; bottom: 30px; } /* the fixed header sits over the top of the stage */
 .pdp .showroom__label { display: none; }           /* the page heading already names the product */
 
-/* "Open the pack": the button on the stage, and what is in one stick */
-.pdp__open { position: absolute; left: 50%; bottom: 16px; z-index: 1; translate: -50% 0; }
-.inside {
-  position: absolute; z-index: 1; left: clamp(16px, 5%, 56px); right: clamp(16px, 5%, 56px); bottom: 84px;
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; pointer-events: none;
-}
-.inside[hidden] { display: none; }
-.inside li {
-  padding: 12px 14px; background: rgba(29, 30, 32, .86); color: var(--chrome);
-  font-size: .9375rem; line-height: 1.25;
-  animation: inside-in .5s var(--ease) backwards;
-}
-.inside li b { display: block; margin-bottom: 2px; font-stretch: 125%; font-weight: 300; font-size: 1.6rem; line-height: 1.05; color: var(--white); }
-.inside li:nth-child(1) { animation-delay: .55s; }
-.inside li:nth-child(2) { animation-delay: .63s; }
-.inside li:nth-child(3) { animation-delay: .71s; }
-.inside li:nth-child(4) { animation-delay: .79s; }
-.inside li:nth-child(5) { animation-delay: .87s; }
-.inside li:nth-child(6) { animation-delay: .95s; }
-@keyframes inside-in { from { opacity: 0; translate: 0 14px; } }
-@media (prefers-reduced-motion: reduce) { .inside li { animation: none; } }
 .pdp__body {
   display: grid; gap: clamp(72px, 14vh, 150px);
   padding: calc(var(--announce-h) + var(--bar-h) + clamp(40px, 7vh, 88px)) var(--gutter) clamp(72px, 10vh, 130px) clamp(8px, 2vw, 32px);
@@ -127,8 +106,4 @@
   .pdp__stage .showroom__pin { position: relative; top: 0; height: 100%; }
   .pdp__body { gap: 72px; padding: 40px var(--gutter) 72px; }
   .pdp__block, .pdp__block.buy__body { min-height: 0; }
-  /* three across keeps the list two rows tall, clear of the pack above it */
-  .inside { gap: 6px; bottom: 74px; left: 12px; right: 12px; }
-  .inside li { padding: 8px 9px; font-size: .75rem; }
-  .inside li b { font-size: 1.1rem; }
 }

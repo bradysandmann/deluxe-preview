@@ -576,61 +576,6 @@ function mount(el) {
   stage.addEventListener('pointerleave', (e) => { if (s.zoom && e.pointerType === 'mouse') hideLens(); }, on);
   addEventListener('scroll', hideLens, { passive: true, signal: gone.signal }); // the page moved under a fixed lens
 
-  /* powder: a burst from the top of the pack, drawn on its own 2D layer over the stage (see open()) */
-  const burst = () => {
-    if (still() || !s.cssW) return;
-    const layer = document.createElement('canvas');
-    layer.className = 'showroom__burst';
-    const dpr = Math.min(devicePixelRatio || 1, 2), W = s.cssW, Hh = s.cssH;
-    layer.width = W * dpr; layer.height = Hh * dpr;
-    pin.appendChild(layer);
-    const g = layer.getContext('2d');
-    const packH = s.cssH / s.F, ox = W / 2, oy = (1 - s.rise) * Hh - packH * 0.4; // the top seal
-    const grains = Array.from({ length: 260 }, () => {
-      const a = -Math.PI / 2 + (Math.random() - 0.5) * 2.3, v = 240 + Math.random() * 660;
-      return { x: ox + (Math.random() - 0.5) * packH * 0.5, y: oy, vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: 0.8 + Math.random() * 2.4, life: 1.3 + Math.random() * 1.3 };
-    });
-    const puffs = Array.from({ length: 9 }, (_, i) => ({ x: ox + (i - 4) * packH * 0.07, y: oy, vx: (i - 4) * 26, vy: -70 - Math.random() * 90, r: 26 + Math.random() * 30, life: 1.6 + Math.random() * 0.9 }));
-    const t0 = performance.now();
-    let last = t0;
-    const frame = (now) => {
-      const dt = Math.min(0.05, (now - last) / 1000), age = (now - t0) / 1000;
-      last = now;
-      g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      g.clearRect(0, 0, W, Hh);
-      for (const p of puffs) {
-        p.x += p.vx * dt; p.y += p.vy * dt; p.r += 46 * dt;
-        const k = Math.max(0, 1 - age / p.life);
-        if (!k) continue;
-        const grad = g.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-        grad.addColorStop(0, `rgba(255,255,255,${0.16 * k})`);
-        grad.addColorStop(1, 'rgba(255,255,255,0)');
-        g.fillStyle = grad;
-        g.beginPath(); g.arc(p.x, p.y, p.r, 0, 6.2832); g.fill();
-      }
-      for (const p of grains) {
-        p.vy += 900 * dt; p.vx *= 1 - 1.4 * dt; p.vy *= 1 - 0.5 * dt;
-        p.x += p.vx * dt; p.y += p.vy * dt;
-        const k = Math.max(0, 1 - age / p.life);
-        if (!k) continue;
-        g.fillStyle = `rgba(255,255,255,${0.9 * k})`;
-        g.beginPath(); g.arc(p.x, p.y, p.r, 0, 6.2832); g.fill();
-      }
-      if (age < 2.7 && !s.disposed) requestAnimationFrame(frame); else layer.remove();
-    };
-    requestAnimationFrame(frame);
-  };
-  // open(): one full turn and a burst of powder; the page shows what is inside (see products.html)
-  const open = () => {
-    if (s.zoom) setZoom(false);
-    s.goal = (Math.round((s.goal ?? s.u) / (2 * Math.PI)) + 1) * 2 * Math.PI;
-    s.vel = 0;
-    if (still() || el.dataset.mode === 'flat') { s.u = s.goal; s.goal = null; }
-    showSide();
-    wake();
-    burst();
-  };
-
   /* drawing */
   s.flat = () => { el.dataset.mode = 'flat'; s.u = Math.round(s.u / Math.PI) * Math.PI; s.goal = null; s.vel = 0; showSide(); };
 
@@ -804,8 +749,7 @@ function mount(el) {
   measure();
   s.scrollNow = s.scroll;
   set({ front: el.dataset.front || '', back: el.dataset.back || '', label: el.dataset.label || 'Product', shape: el.dataset.shape || 'pouch' });
-  el.showroom = { set, turn, dispose, open, zoom: setZoom };
-  el.dispatchEvent(new CustomEvent('showroom:mount', { bubbles: true })); // pages hang their own controls on this
+  el.showroom = { set, turn, dispose, zoom: setZoom };
   return el.showroom;
 }
 

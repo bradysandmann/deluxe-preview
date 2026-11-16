@@ -26,7 +26,7 @@
       <div class="pdp__stage">
         <div class="showroom" id="product-showroom" data-showroom data-shape="pouch" data-layout="feature"
              data-front="assets/img/cut/pack-30-front.webp" data-back="assets/img/cut/pack-30-back.webp"
-             data-label="Deluxe 30 Pack"></div>
+             data-label="Deluxe 30 Pack" data-inspect="Supplement facts"></div>
       </div>
 
       <div class="pdp__body">
@@ -79,6 +79,14 @@
         </div>
       </div>
     </section>
+
+    <!-- The stage's "Supplement facts" button opens the facts block above as a sheet: real text, large, one tap. -->
+    <dialog class="facts-sheet" id="facts-sheet" aria-label="Supplement facts">
+      <button class="facts-sheet__close" type="button" data-close aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="facts-sheet__body" data-facts-copy></div>
+    </dialog>
   </main>
 
   <div data-include="signup"></div>
@@ -117,6 +125,17 @@
         const v = { front: `assets/img/${item.front}`, back: `assets/img/${item.back}`, label: item.name, shape };
         if (stage.showroom) stage.showroom.set(v); else Object.assign(stage.dataset, v);
       };
+      // "Supplement facts" on the stage: the facts block already on this page, shown as a sheet. A copy, so the
+      // figures still come from one place; ids are dropped from the copy so none is on the page twice.
+      const sheet = $('#facts-sheet');
+      stage.addEventListener('showroom:inspect', () => {
+        const copy = $('#facts').cloneNode(true);
+        copy.querySelectorAll('[id], [aria-labelledby]').forEach((n) => { n.removeAttribute('id'); n.removeAttribute('aria-labelledby'); });
+        $('[data-facts-copy]').replaceChildren(...copy.childNodes);
+        sheet.showModal();
+      });
+      sheet.addEventListener('click', (e) => { if (e.target === sheet || e.target.closest('[data-close]')) sheet.close(); }); // the backdrop or the close button
+
       const stickBtn = $('[data-stick-toggle]');
       let pack = products[0];
       let showingStick = false;

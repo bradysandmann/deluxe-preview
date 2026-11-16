@@ -81,22 +81,17 @@
 .showroom--feature[data-shape="stick"][data-facing="Back"] .showroom__arrow--prev { left: 8px; }
 .showroom--feature[data-shape="stick"][data-facing="Back"] .showroom__arrow--next { right: 8px; }
 
-/* magnifier: a button on the stage, and a lens that follows the pointer */
-.showroom__zoom {
+/* inspect: a labelled button on the stage; the page decides what it opens (the product page: the supplement facts) */
+.showroom__inspect {
   --cut: 10px;
   position: absolute; right: 16px; bottom: 16px; z-index: 1;
-  display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 0; cursor: pointer;
-  background: rgba(255, 255, 255, .08); color: var(--white, #fff);
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 18px 0 14px; border: 0; cursor: pointer;
+  background: var(--white, #fff); color: var(--ink, #0c0c0d);
+  font: inherit; font-size: .9375rem; font-weight: 650; line-height: 1;
   clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
-  transition: background-color .2s, color .2s;
+  transition: background-color .2s;
 }
-.showroom__zoom svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: square; }
-.showroom__zoom:hover, .showroom__zoom[aria-pressed="true"] { background: var(--white, #fff); color: var(--ink, #0c0c0d); }
-.showroom__zoom:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--white, #fff); }
-.showroom__zoom[aria-pressed="true"]:focus-visible, .showroom__zoom:hover:focus-visible { box-shadow: inset 0 0 0 2px var(--ink, #0c0c0d), inset 0 0 0 4px var(--white, #fff); }
-.showroom--card .showroom__zoom { display: none; } /* cards are too small to inspect: the product page has the magnifier */
-.showroom__lens { /* lives on <body>, above the fixed header, so nothing covers or clips it */
-  position: fixed; z-index: 45; width: 250px; height: 250px; pointer-events: none;
-  clip-path: polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px);
-}
-.showroom.is-zooming .showroom__stage { cursor: crosshair; touch-action: none; }
+.showroom__inspect[hidden] { display: none; }
+.showroom__inspect svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: square; }
+.showroom__inspect:hover { background: var(--chrome, #d6d8db); }
+.showroom__inspect:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--ink, #0c0c0d), inset 0 0 0 4px var(--white, #fff); }

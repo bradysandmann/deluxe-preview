@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+  <title>Catalog | Deluxe</title>
+  <meta name="description" content="The Deluxe catalog. Ignite, an electrolyte drink mix with energy and vitamins, in two pack sizes. Launching soon.">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/img/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/showroom.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+</head>
+<body data-page="catalog">
+  <div data-include="header"></div>
+
+  <main id="main">
+    <div class="page-head">
+      <div class="wrap">
+        <h1>Catalog</h1>
+      </div>
+    </div>
+
+    <section class="section section--light" aria-labelledby="catalog-title">
+      <div class="wrap">
+        <h2 class="visually-hidden" id="catalog-title">All products</h2>
+        <div class="catalog-bar">
+          <p class="filters__count" data-count></p>
+        </div>
+        <!-- site.js fills this with one card per product; the script below adds the closing tile -->
+        <div class="card-grid card-grid--three" data-products=""></div>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="signup"></div>
+  <div data-include="footer"></div>
+
+  <script src="assets/js/site.js"></script>
+  <script type="module" src="assets/js/showroom.js"></script>
+  <script>
+    (() => {
+      const n = ((window.DELUXE && window.DELUXE.products) || []).length;
+      const grid = document.querySelector('[data-products]');
+      document.querySelector('[data-count]').textContent = `${n} ${n === 1 ? 'product' : 'products'}`;
+      if (!n) grid.insertAdjacentHTML('beforebegin', '<p class="empty">Nothing is listed yet. Join the early access list to hear when the store opens.</p>');
+      grid.insertAdjacentHTML('beforeend', `
+        <a class="more-tile" href="#early-access">
+          <h3>More is on the way</h3>
+          <p>Join the early access list to hear about new releases before anyone else.</p>
+          <span>Get early access</span>
+        </a>`);
+    })();
+  </script>
+</body>
+</html>

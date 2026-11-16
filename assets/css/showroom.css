@@ -1,0 +1,75 @@
+/* Deluxe showroom, variant B (spotlit). Uses the tokens from site.css only: black, greys, white.
+   Knobs, set on .showroom or any parent:
+     --showroom-bg     stage colour (the 3D room reads it too)
+     --showroom-track  feature layout: how much page scroll one full turn takes
+     --showroom-top    feature layout: height of a fixed header to pin beneath
+     --showroom-ratio  card layout: stage shape */
+
+.showroom {
+  --showroom-bg: var(--ink, #0c0c0d);
+  --showroom-track: 300vh;
+  --showroom-top: 0px;
+  --showroom-ratio: 4 / 5;
+  position: relative;
+}
+.showroom__pin { position: relative; overflow: hidden; background: var(--showroom-bg); }
+
+/* feature: the stage pins while the page scrolls through the track */
+.showroom--feature { height: var(--showroom-track); }
+.showroom--feature .showroom__pin {
+  position: sticky; top: var(--showroom-top);
+  height: calc(100vh - var(--showroom-top)); height: calc(100svh - var(--showroom-top));
+}
+/* card: a chamfered stage */
+.showroom--card .showroom__pin {
+  aspect-ratio: var(--showroom-ratio);
+  clip-path: polygon(0 0, calc(100% - var(--cut, 14px)) 0, 100% var(--cut, 14px), 100% 100%, var(--cut, 14px) 100%, 0 calc(100% - var(--cut, 14px)));
+}
+
+.showroom__stage {
+  position: absolute; inset: 0;
+  cursor: grab; touch-action: pan-y; /* sideways drags spin, vertical drags still scroll the page */
+  user-select: none; -webkit-user-select: none;
+}
+.showroom.is-dragging .showroom__stage { cursor: grabbing; }
+.showroom .showroom__stage:focus-visible { outline: 2px solid var(--white, #fff); outline-offset: -5px; }
+.showroom__canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+
+/* Flat mode: what shows before the 3D pack is ready, and for good where there is no WebGL.
+   Same stage: the pool of light on the floor and the glow in the air, as gradients. */
+.showroom__flat {
+  position: absolute; left: 50%; top: var(--pack-y, 43.5%); translate: -50% -50%;
+  height: var(--pack-h, 57%); width: auto; max-width: none;
+  pointer-events: none; -webkit-user-drag: none;
+}
+.showroom[data-mode="gl"] .showroom__flat { visibility: hidden; }
+.showroom[data-mode="flat"] .showroom__canvas { display: none; }
+
+/* arrows: always there, flanking the pack */
+.showroom__arrow {
+  --cut: 10px;
+  position: absolute; top: var(--pack-y, 43.5%); z-index: 1; translate: 0 -50%;
+  display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 0; cursor: pointer;
+  background: rgba(255, 255, 255, .08); color: var(--white, #fff);
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+  transition: background-color .2s, color .2s;
+}
+.showroom__arrow--prev { left: max(8px, calc(50% - var(--pack-w, 0px) / 2 - 112px)); }
+.showroom__arrow--next { right: max(8px, calc(50% - var(--pack-w, 0px) / 2 - 112px)); }
+.showroom--card .showroom__arrow { width: 44px; height: 44px; }
+.showroom--card .showroom__arrow--prev { left: 6px; }
+.showroom--card .showroom__arrow--next { right: 6px; }
+.showroom__arrow:hover { background: var(--white, #fff); color: var(--ink, #0c0c0d); }
+.showroom__arrow:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--white, #fff); }
+.showroom__arrow:hover:focus-visible { box-shadow: inset 0 0 0 2px var(--ink, #0c0c0d), inset 0 0 0 4px var(--white, #fff); }
+.showroom__arrow svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: square; }
+
+/* the line that says which side is facing you */
+.showroom__meta {
+  position: absolute; left: 16px; top: 16px; z-index: 1; margin: 0;
+  display: flex; gap: 12px;
+  font-size: .875rem; line-height: 1; color: var(--fog, #a9adb3); pointer-events: none;
+}
+.showroom__side { color: var(--white, #fff); font-weight: 600; }
+.showroom--card .showroom__label { display: none; } /* the card names the product itself */
+.showroom--feature .showroom__meta { left: var(--gutter, 24px); top: 28px; font-size: 1rem; }

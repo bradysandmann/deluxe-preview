@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+  <title>Deluxe Ignite electrolyte drink mix | Deluxe</title>
+  <meta name="description" content="Deluxe Ignite: an electrolyte drink mix with energy and vitamins in single-serve stick packs. 30 Pack and 12 Pack. Launching soon.">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/img/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/showroom.css">
+  <link rel="stylesheet" href="assets/css/products.css">
+</head>
+<body data-page="products">
+  <div data-include="header"></div>
+
+  <main id="main">
+    <!-- The showroom: the real pack floats on black, pinned beside the details.
+         Scrolling this section turns it (front, side, back, front); drag and the arrows turn it too. -->
+    <section class="pdp" aria-labelledby="product-title">
+      <div class="pdp__stage">
+        <div class="showroom" id="product-showroom" data-showroom data-shape="pouch" data-layout="feature"
+             data-front="assets/img/cut/pack-30-front.webp" data-back="assets/img/cut/pack-30-back.webp"
+             data-label="Deluxe 30 Pack"></div>
+      </div>
+
+      <div class="pdp__body">
+        <div class="pdp__block buy__body">
+          <h1 id="product-title">Deluxe Ignite</h1>
+          <p class="buy__tagline" data-i="tagline"></p>
+          <ul class="chips" data-i="badges"></ul>
+
+          <fieldset class="packs">
+            <legend>Pack size</legend>
+            <div class="packs__grid" data-packs></div>
+          </fieldset>
+          <button class="buy__stick" type="button" data-stick-toggle>See a stick pack</button>
+
+          <div class="buy__meta">
+            <span data-pack-line aria-live="polite"></span>
+            <span class="status">Launching soon</span>
+          </div>
+          <a class="btn buy__cta" id="notify-btn" href="#early-access" data-notify="Deluxe 30 Pack">Notify me</a>
+          <p class="buy__directions" data-i="directions"></p>
+        </div>
+
+        <div class="pdp__block" id="facts">
+          <h2 id="facts-title">Every dose listed</h2>
+          <table class="facts-table" aria-labelledby="facts-title">
+            <caption>Supplement facts. Serving size: <span data-i="serving"></span></caption>
+            <thead>
+              <tr>
+                <th scope="col">Nutrient</th>
+                <th scope="col">Amount per serving</th>
+                <th scope="col">% Daily Value</th>
+              </tr>
+            </thead>
+            <tbody data-i="facts"></tbody>
+          </table>
+          <div class="facts__notes" data-i="notes"></div>
+          <p class="facts__other"><strong>Other ingredients:</strong> <span data-i="other"></span></p>
+          <ul class="facts__free" data-i="free"></ul>
+        </div>
+
+        <div class="pdp__block use">
+          <div>
+            <h2>Directions</h2>
+            <p data-i="directions"></p>
+          </div>
+          <div>
+            <h2>Caffeine</h2>
+            <p data-i="caffeine"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-include="signup"></div>
+  <div data-include="footer"></div>
+
+  <script src="assets/js/site.js"></script>
+  <script type="module" src="assets/js/showroom.js"></script>
+  <script>
+    /* Deluxe Ignite product page: fills copy from window.DELUXE.ignite and drives the showroom from the pack choice. */
+    (() => {
+      'use strict';
+      const { ignite: I, products, stick, esc } = window.DELUXE;
+      const $ = (sel) => document.querySelector(sel);
+      const fill = (key, text) => document.querySelectorAll(`[data-i="${key}"]`).forEach((el) => { el.textContent = text; });
+      const items = (list) => list.map((t) => `<li>${esc(t)}</li>`).join('');
+
+      fill('tagline', I.tagline);
+      fill('directions', I.directions);
+      fill('caffeine', I.caffeine);
+      fill('serving', I.serving);
+      fill('other', I.other);
+      $('[data-i="badges"]').innerHTML = items(I.badges);
+      $('[data-i="free"]').innerHTML = items(I.free);
+      $('[data-i="notes"]').innerHTML = I.factNotes.map((n) => `<p class="note">${esc(n)}</p>`).join('');
+      $('[data-i="facts"]').innerHTML = I.facts.map(([name, amount, dv]) => {
+        const [, nutrient, form] = name.match(/^(.*?)(?: \((.*)\))?$/); // "Magnesium (as magnesium malate)" -> name + form
+        return `<tr><th scope="row">${esc(nutrient)}${form ? ` <span>(${esc(form)})</span>` : ''}</th>` +
+               `<td>${esc(amount)}</td><td>${esc(dv)}</td></tr>`;
+      }).join('');
+      console.assert($('[data-i="facts"]').rows.length === I.facts.length, 'facts table is missing rows');
+
+      // showroom: shows the chosen pack, or a single stick pack while the toggle is on.
+      // The showroom module loads after this script, so before it mounts we set the data attributes it reads.
+      const stage = $('#product-showroom');
+      const view = (item, shape) => {
+        const v = { front: `assets/img/${item.front}`, back: `assets/img/${item.back}`, label: item.name, shape };
+        if (stage.showroom) stage.showroom.set(v); else Object.assign(stage.dataset, v);
+      };
+      const stickBtn = $('[data-stick-toggle]');
+      let pack = products[0];
+      let showingStick = false;
+      const showStick = (on) => {
+        showingStick = on;
+        if (on) view(stick, 'stick'); else view(pack, 'pouch');
+        stickBtn.textContent = on ? 'Back to the pack' : 'See a stick pack';
+      };
+
+      // pack size: updates the count line, the Notify target and the showroom
+      const packs = $('[data-packs]');
+      packs.innerHTML = products.map((p, i) => `
+        <label class="pack">
+          <input type="radio" name="pack" value="${esc(p.id)}"${i ? '' : ' checked'}>
+          <span class="pack__tile">${esc(p.servings)} Pack</span>
+        </label>`).join('');
+      const choose = (p) => {
+        pack = p;
+        $('[data-pack-line]').textContent = `${p.servings} stick packs`;
+        $('#notify-btn').dataset.notify = p.name;
+        showStick(false);
+      };
+      // click, not change: it also fires when the already-chosen pack is picked again to leave the stick view
+      packs.addEventListener('click', (e) => {
+        if (e.target.matches('input')) choose(products.find((p) => p.id === e.target.value));
+      });
+      stickBtn.addEventListener('click', () => showStick(!showingStick));
+
+      // links from other pages land on the right pack: ?pack=deluxe-12 preselects it, ?view=stick shows the stick
+      const q = new URLSearchParams(location.search);
+      const wanted = products.find((p) => p.id === q.get('pack')) || products[0];
+      packs.querySelector(`input[value="${wanted.id}"]`).checked = true;
+      choose(wanted);
+      if (q.get('view') === 'stick') showStick(true);
+    })();
+  </script>
+</body>
+</html>

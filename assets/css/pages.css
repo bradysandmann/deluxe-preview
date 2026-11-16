@@ -1,0 +1,26 @@
+/* Page-specific styles for catalog.html and contact.html. Shared styles live in site.css. */
+
+/* ---------- catalog ---------- */
+.catalog-bar { display: flex; margin-bottom: 20px; }
+
+/* the non-product tile that closes the grid: dark on the light section so it reads as "not a product" */
+.more-tile {
+  display: flex; flex-direction: column; gap: 10px; min-height: 240px; padding: 26px;
+  background: var(--ink); color: var(--fog); text-decoration: none;
+}
+.section--light .more-tile h3 { color: var(--white); }
+.more-tile p { flex: 1; max-width: 32ch; }
+.more-tile span {
+  align-self: flex-start; color: var(--white); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px;
+}
+.more-tile:hover span { text-decoration-thickness: 2px; }
+
+/* ---------- contact ---------- */
+.section--after-head { padding-top: 0; }
+.contact-title { font-size: clamp(1.5rem, 2.4vw, 2rem); }
+.contact-info { display: grid; gap: 22px; align-content: start; }
+.contact-info ul { border-top: 1px solid var(--line); }
+.contact-info li { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.contact-info .text-link { justify-self: start; color: var(--white); }
+.contact-form .contact-title { margin-bottom: 24px; }

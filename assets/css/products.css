@@ -1,0 +1,104 @@
+/* Deluxe Ignite product page. Page-specific styles only; the shared system lives in site.css,
+   the spinning product viewer in viewer.css. */
+
+/* ---------- buy block: viewer is the centre focus, details beside it ---------- */
+.buy { padding: calc(var(--announce-h) + var(--bar-h) + clamp(24px, 4vw, 56px)) 0 clamp(56px, 8vw, 104px); }
+.buy__grid {
+  display: grid; grid-template-columns: minmax(0, 11fr) minmax(0, 9fr);
+  gap: clamp(28px, 5vw, 80px); align-items: center;
+}
+.buy__body { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+@media (max-width: 860px) { .buy__grid { grid-template-columns: minmax(0, 1fr); } }
+
+.buy__type { font-size: .9375rem; color: var(--mid); }
+.buy__body h1 { margin-top: -8px; font-size: clamp(2.2rem, 4.6vw, 4rem); }
+.buy__tagline { font-stretch: 112%; font-weight: 600; font-size: clamp(1.125rem, 1.6vw, 1.375rem); color: var(--white); }
+
+/* pack size: radio group drawn as two chamfered tiles */
+.packs { width: 100%; margin: 8px 0 0; padding: 0; border: 0; }
+.packs legend { padding: 0; margin-bottom: 10px; font-size: .9375rem; font-weight: 550; color: var(--white); }
+.packs__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pack { position: relative; display: block; }
+.pack input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.pack__tile {
+  --cut: 10px;
+  display: block; padding: 18px 20px;
+  font-stretch: 112%; font-weight: 650; color: var(--white);
+  background: var(--slate);
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+  transition: background-color .2s, color .2s;
+}
+.pack input:hover + .pack__tile { background: var(--steel); }
+.pack input:checked + .pack__tile { background: var(--white); color: var(--ink); box-shadow: none; }
+.pack input:focus-visible + .pack__tile { box-shadow: inset 0 0 0 3px var(--white); }
+.pack input:checked:focus-visible + .pack__tile { box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 5px var(--white); }
+
+/* quiet third option: swaps the viewer to a single stick pack and back */
+.buy__stick {
+  margin: -6px 0; padding: 12px 0; background: none; border: 0; cursor: pointer;
+  font-weight: 600; color: var(--white);
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px;
+}
+.buy__stick:hover { text-decoration-thickness: 2px; }
+
+.buy__meta {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; width: 100%;
+  margin-top: 4px; color: var(--chrome);
+}
+.buy__cta { width: 100%; min-height: 56px; }
+.buy__directions { max-width: 46ch; color: var(--fog); }
+
+/* ---------- supplement facts ---------- */
+.facts { display: grid; grid-template-columns: 4fr 7fr; gap: clamp(28px, 6vw, 96px); }
+@media (max-width: 860px) { .facts { grid-template-columns: 1fr; } }
+.facts .lede { margin-top: 18px; }
+.facts__free { display: grid; gap: 10px; margin-top: 24px; color: var(--chrome); }
+.facts__free li { display: flex; align-items: baseline; gap: 12px; }
+.facts__free li::before {
+  content: ""; flex: none; width: 10px; height: 10px; background: var(--white);
+  clip-path: polygon(3px 0, 100% 0, 100% calc(100% - 3px), calc(100% - 3px) 100%, 0 100%, 0 3px);
+}
+
+.facts-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.facts-table caption { padding-bottom: 14px; text-align: left; font-size: .9375rem; color: var(--fog); }
+.facts-table th, .facts-table td {
+  padding: 14px 0; border-bottom: 1px solid var(--line);
+  text-align: left; vertical-align: baseline; font-weight: 400;
+}
+.facts-table thead th { font-size: .8125rem; font-weight: 550; line-height: 1.25; color: var(--mid); border-bottom-color: var(--mid); }
+.facts-table tbody th { padding-right: 12px; font-weight: 550; color: var(--white); }
+.facts-table tbody th span { font-weight: 400; color: var(--fog); }
+.facts-table td, .facts-table thead th + th { padding-left: 12px; text-align: right; }
+.facts-table td { white-space: nowrap; color: var(--chrome); }
+.facts-table td:last-child { color: var(--fog); }
+.facts__notes { margin-top: 16px; }
+.facts__other { margin-top: 20px; color: var(--chrome); }
+.facts__other strong { font-weight: 600; color: var(--white); }
+
+/* ---------- directions + caffeine ---------- */
+.use { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 6vw, 96px); }
+@media (max-width: 860px) { .use { grid-template-columns: 1fr; } }
+.use h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+.use p { margin-top: 16px; max-width: 54ch; color: var(--chrome); }
+
+/* ---------- product page showroom: the pack pinned on black beside the details ----------
+   The left cell is as tall as the right column, and that height is the scroll track that turns the pack. */
+.pdp { display: grid; grid-template-columns: minmax(0, 54fr) minmax(0, 46fr); background: var(--ink); }
+.pdp__stage { position: relative; }
+.pdp__stage .showroom { --showroom-track: 100%; height: 100%; }
+.pdp .showroom__meta { top: auto; bottom: 28px; } /* the fixed header sits over the top of the stage */
+.pdp__body {
+  display: grid; gap: clamp(72px, 14vh, 150px);
+  padding: calc(var(--announce-h) + var(--bar-h) + clamp(40px, 7vh, 88px)) var(--gutter) clamp(72px, 10vh, 130px) clamp(8px, 2vw, 32px);
+}
+.pdp__block { min-height: 64vh; display: flex; flex-direction: column; justify-content: center; }
+.pdp__block.buy__body { min-height: calc(100svh - var(--announce-h) - var(--bar-h) - 120px); }
+.pdp__block h2 { margin-bottom: 28px; font-size: clamp(1.9rem, 3.4vw, 3rem); }
+.pdp__block.use { display: grid; grid-template-columns: 1fr; gap: 48px; align-content: center; }
+.pdp__block.use h2 { margin-bottom: 0; }
+@media (max-width: 860px) {
+  .pdp { grid-template-columns: minmax(0, 1fr); }
+  .pdp__stage .showroom { --showroom-track: 180svh; height: var(--showroom-track); }
+  .pdp__body { gap: 72px; padding: 40px var(--gutter) 72px; }
+  .pdp__block, .pdp__block.buy__body { min-height: 0; }
+}

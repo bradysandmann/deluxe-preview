@@ -14,7 +14,15 @@
 .nuke__stack .nuke__row b { display: block; width: .6em; height: 1em; animation: none; }
 .nuke__stack .nuke__row b svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .nuke__stack .seg { fill: rgba(255, 255, 255, .055); }
-.nuke__stack .seg.on { fill: url(#nuke-chrome); filter: drop-shadow(0 0 .6px rgba(255, 255, 255, .7)) drop-shadow(0 0 7px rgba(255, 255, 255, .16)); }
+/* lit and shine layers sit over the faint unlit segment and FADE (70 ms) when a number changes: smooth, no rebuild.
+   One glow filter per digit (not per segment) keeps repaints cheap. */
+.nuke__stack .lit { fill: url(#nuke-chrome); opacity: 0; transition: opacity .07s linear; }
+.nuke__stack .shine { opacity: 0; transition: opacity .07s linear; }
+.nuke__stack .lit.on, .nuke__stack .shine.on { opacity: 1; }
+.nuke__stack .nuke__row b svg { filter: drop-shadow(0 0 .6px rgba(255, 255, 255, .7)) drop-shadow(0 0 7px rgba(255, 255, 255, .16)); }
+/* DELUXE moment: the colons and unit labels step back so the word reads */
+.nuke__stack .nuke__sep, .nuke__stack .nuke__row[data-l]::after { transition: opacity .06s linear; }
+.nuke__stack.is-word .nuke__sep, .nuke__stack.is-word .nuke__row[data-l]::after { opacity: 0; }
 .nuke__stack .nuke__row[data-l]::after { content: attr(data-l); position: static; transform: none;
   font: 700 max(9px, .19em)/1 Archivo, sans-serif; letter-spacing: .3em; text-transform: uppercase; color: var(--fog); }
 /* colon: two chrome dots centred on the digit height */

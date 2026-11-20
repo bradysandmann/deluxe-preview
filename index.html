@@ -49,12 +49,16 @@
               <p class="countdown__digits countdown__digits--broken nuke__stack"><span class="nuke__row" data-l="Days"><span><b>0</b><b>0</b></span></span><i class="nuke__sep"></i><span class="nuke__row" data-l="Hrs"><span><b>0</b><b>0</b></span></span><i class="nuke__sep"></i><span class="nuke__row" data-l="Min"><span><b>0</b><b>0</b></span></span><i class="nuke__sep"></i><span class="nuke__row" data-l="Sec"><span><b>0</b><b>0</b></span></span></p>
             </div>
             <script>
-              (() => {   // all-zero chrome readout; random flickers flip digits for a split second; ticks only once a launch date is set
+              (() => {   // all-zero chrome readout; smooth random flicker; now and then the middle six digits glitch into DELUXE; ticks only once a launch date is set
                 const root = document.querySelector('.nuke'); if (!root) return;
+                const stack = root.querySelector('.nuke__stack');
                 const rows = [...root.querySelectorAll('.nuke__row')];
-                // seven-segment glyphs: every segment drawn, lit ones get .on (unlit stay faintly visible)
+                // seven-segment glyphs. Each digit is BUILT ONCE (faint unlit segment + chrome lit layer + shine layer per segment, plus the
+                // two diagonals of the X in DELUXE); a change only toggles .on and the lit layers fade in 70 ms, so the flicker is smooth.
                 const SEG = { a: 'M2.2 1.2 3.2 .2h5.6l1 1-1 1H3.2z', b: 'M10.8 2.2l1 1v5.6l-1 1-1-1V3.2z', c: 'M10.8 10.4l1 1v5.6l-1 1-1-1v-5.6z',
-                  d: 'M2.2 19.2l1-1h5.6l1 1-1 1H3.2z', e: 'M1.2 10.4l1 1v5.6l-1 1-1-1v-5.6z', f: 'M1.2 2.2l1 1v5.6l-1 1-1-1V3.2z', g: 'M2.2 10.2l1-1h5.6l1 1-1 1H3.2z' };
+                  d: 'M2.2 19.2l1-1h5.6l1 1-1 1H3.2z', e: 'M1.2 10.4l1 1v5.6l-1 1-1-1v-5.6z', f: 'M1.2 2.2l1 1v5.6l-1 1-1-1V3.2z', g: 'M2.2 10.2l1-1h5.6l1 1-1 1H3.2z',
+                  x: 'M1.4 1.4 2.9.4l8.4 18.8-1.5 1z', y: 'M11.3 1.4 9.8.4 1.4 19.2l1.5 1z' };
+                const KEYS = Object.keys(SEG);
                 const LIT = ['abcdef', 'bc', 'abged', 'abgcd', 'fgbc', 'afgcd', 'afgedc', 'abc', 'abcdefg', 'abcdfg'];
                 // the DELUXE logo's shine: a light band sweeps across the digits every 6 s, one gradient per digit so it travels left to right
                 const defs = root.querySelector('.nuke__defs defs');
@@ -65,40 +69,57 @@
                     '<animate attributeName="x1" values="-30;30;30" keyTimes="0;.16;1" dur="6s" begin="' + at + '" repeatCount="indefinite"/>' +
                     '<animate attributeName="x2" values="-16;44;44" keyTimes="0;.16;1" dur="6s" begin="' + at + '" repeatCount="indefinite"/></linearGradient>');
                 }
-                const glyph = (n, i) => '<svg viewBox="0 0 12 20.4" aria-hidden="true"><g transform="skewX(-6) translate(1 0)">' +
-                  Object.keys(SEG).map((s) => '<path class="seg' + (LIT[n].includes(s) ? ' on' : '') + '" d="' + SEG[s] + '"/>').join('') +
-                  [...LIT[n]].map((s) => '<path class="shine" fill="url(#nuke-shine-' + i + ')" d="' + SEG[s] + '"/>').join('') + '</g></svg>';
-                const draw = (b) => { b.innerHTML = glyph(+b.dataset.d, b.dataset.i); };
-                root.querySelectorAll('b').forEach((b, i) => { b.dataset.i = i; b.dataset.d = b.textContent.trim(); draw(b); });
+                const svg = (i) => '<svg viewBox="0 0 12 20.4" aria-hidden="true"><g transform="skewX(-6) translate(1 0)">' +
+                  'abcdefg'.split('').map((s) => '<path class="seg" d="' + SEG[s] + '"/>').join('') +
+                  KEYS.map((s) => '<path class="lit" d="' + SEG[s] + '"/>').join('') +
+                  KEYS.map((s) => '<path class="shine" fill="url(#nuke-shine-' + i + ')" d="' + SEG[s] + '"/>').join('') + '</g></svg>';
+                const show = (b, segs) => { b._lit.forEach((p, k) => p.classList.toggle('on', segs.includes(KEYS[k]))); b._shine.forEach((p, k) => p.classList.toggle('on', segs.includes(KEYS[k]))); };
+                const digits = [...stack.querySelectorAll('b')];
+                digits.forEach((b, i) => { b.dataset.d = b.textContent.trim(); b.innerHTML = svg(i);
+                  b._lit = [...b.querySelectorAll('.lit')]; b._shine = [...b.querySelectorAll('.shine')]; show(b, LIT[+b.dataset.d]); });
+                const real = (b) => LIT[+b.dataset.d];
+                const busy = new Set();
                 const target = root.dataset.target && Date.parse(root.dataset.target);
                 if (target) {
-                  const put = (row, v) => { const s = String(v).padStart(2, '0'), r = rows.indexOf(row);
-                    row.firstElementChild.innerHTML = [...s].map((c, j) => '<b data-d="' + c + '" data-i="' + (r * 2 + j) + '"></b>').join(''); row.querySelectorAll('b').forEach(draw); };
+                  const put = (row, v) => { const s = String(Math.min(v, 99)).padStart(2, '0');
+                    row.querySelectorAll('b').forEach((b, j) => { b.dataset.d = s[j]; if (!busy.has(b) && !stack.classList.contains('is-word')) show(b, real(b)); }); };
                   const tick = () => { let t = Math.max(0, Math.floor((target - Date.now()) / 1000));
                     [86400, 3600, 60, 1].forEach((u, i) => { put(rows[i], Math.floor(t / u)); t %= u; }); };
                   tick(); setInterval(tick, 1000);
                 }
                 if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-                // Brady 2026-11-20: no grey dimming; the flicker ALTERNATES a digit between random numbers and its real value
-                // (e.g. 7 0 3 0) in a quick burst, staying full chrome, then settles on the real value.
-                const pick = () => 1 + Math.floor(Math.random() * 9);   // never 0, so every flip is visible
-                // Brady 2026-11-20 "more number flickering": two independent loops, a burst every 0.8-2 s from each (flickering about 60% of the time),
-                // 1-3 digits per burst, 3-5 random/real alternations
-                const busy = new Set();
+                // the flicker ALTERNATES random numbers with the real value (e.g. 7 0 3 0) in full chrome, never dimmed (Brady: "it's going grey");
+                // "more number flickering": two loops, a burst every 0.8-2 s from each, 1-3 digits, 3-5 alternations, 85-120 ms per step
+                const pick = () => LIT[1 + Math.floor(Math.random() * 9)];   // never 0, so every flip is visible
                 const glitch = () => {
-                  const all = [...root.querySelectorAll('b')].filter((b) => !busy.has(b)), n = 1 + Math.floor(Math.random() * 3);
-                  const hit = all.sort(() => Math.random() - .5).slice(0, n);
-                  hit.forEach((b) => busy.add(b));
-                  const phases = 2 * (3 + Math.floor(Math.random() * 3));
-                  let k = 0;
-                  const step = () => {
-                    hit.forEach((b) => { b.innerHTML = glyph(k % 2 === 0 ? pick() : +b.dataset.d, b.dataset.i); });
-                    if (++k < phases) setTimeout(step, 45 + Math.random() * 35); else hit.forEach((b) => { draw(b); busy.delete(b); });
-                  };
-                  if (hit.length) step();
+                  if (!stack.classList.contains('is-word')) {
+                    const hit = digits.filter((b) => !busy.has(b)).sort(() => Math.random() - .5).slice(0, 1 + Math.floor(Math.random() * 3));
+                    hit.forEach((b) => busy.add(b));
+                    const phases = 2 * (3 + Math.floor(Math.random() * 3));
+                    let k = 0;
+                    const step = () => {
+                      if (stack.classList.contains('is-word')) { hit.forEach((b) => { if (!mid.includes(b)) show(b, real(b)); busy.delete(b); }); return; }
+                      hit.forEach((b) => show(b, k % 2 === 0 ? pick() : real(b)));
+                      if (++k < phases) setTimeout(step, 85 + Math.random() * 35); else hit.forEach((b) => { show(b, real(b)); busy.delete(b); });
+                    };
+                    if (hit.length) step();
+                  }
                   setTimeout(glitch, 800 + Math.random() * 1200);
                 };
                 setTimeout(glitch, 500); setTimeout(glitch, 1100);
+                // Brady 2026-11-20 "can it like flicker DELUXE somehow", "excluding first and last number": every 7-11 s the six middle
+                // digits stutter into d E L U X E (the X uses two diagonals), hold, and stutter back; colons and labels fade meanwhile
+                const WORD = ['bcdeg', 'adefg', 'def', 'bcdef', 'xy', 'adefg'];
+                const mid = digits.slice(1, 7);
+                const word = (on) => { stack.classList.toggle('is-word', on); mid.forEach((b, j) => show(b, on ? WORD[j] : real(b)));
+                  if (on) [digits[0], digits[7]].forEach((b) => show(b, real(b))); };   // first and last always show their real number
+                const flash = () => {
+                  const seq = [90, 70, 110, 60, 1000, 60, 90];   // word, digits, word, digits, word held, digits, word, then digits
+                  let k = 0;
+                  const next = () => { if (k < seq.length) { word(k % 2 === 0); setTimeout(next, seq[k++]); } else { word(false); setTimeout(flash, 7000 + Math.random() * 4000); } };
+                  next();
+                };
+                setTimeout(flash, 4200);
               })();
             </script>
           </div>

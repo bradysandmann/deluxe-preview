@@ -42,6 +42,14 @@
           <!-- No launch date yet (Brady 2026-11-19): the countdown is shown "under repair" instead of ticking to a made-up date -->
           <div class="countdown countdown--repair">
             <p class="countdown__label">Season 01</p>
+            <p class="countdown__digits countdown__digits--broken" aria-hidden="true"><span data-l="Days"><b>4</b><b class="tilt">2</b></span><i>:</i><span data-l="Hrs"><b class="out">0</b><b>3</b></span><i class="slip">:</i><span data-l="Min"><b>3</b><b class="tilt2">4</b></span><i>:</i><span data-l="Sec"><b>2</b><b class="out">2</b></span></p>
+            <script>
+              (() => {   // broken clock: digits keep scrambling, so it never reads as a real date
+                if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                const d = document.querySelectorAll('.countdown__digits--broken b');
+                setInterval(() => { d.forEach((b) => { if (Math.random() < .35) b.textContent = Math.floor(Math.random() * 10); }); }, 140);
+              })();
+            </script>
             <div class="repair-stage">
               <svg class="repair" viewBox="-40 0 400 120" role="img" aria-label="A broken countdown clock in pieces. One builder naps, the other swears, throws his mallet at him, and the napper works for a moment before dozing off again.">
               <defs>
@@ -51,8 +59,7 @@
                 <linearGradient id="g-buckle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#9da1a8"/></linearGradient>
                 <linearGradient id="g-mallet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d7d9de"/><stop offset="1" stop-color="#7d8086"/></linearGradient>
               </defs>
-              <g class="repair__clock"><rect class="seg fix fix1" x="101" y="26.5" width="14" height="3"/><rect class="seg fix fix2" x="217" y="26.5" width="14" height="3"/><rect class="seg" x="43" y="8" width="14" height="3"/><rect class="seg" x="57" y="11" width="3" height="15"/><rect class="seg" x="57" y="30" width="3" height="15"/><rect class="seg" x="43" y="45" width="14" height="3"/><rect class="seg" x="40" y="30" width="3" height="15"/><rect class="seg" x="40" y="11" width="3" height="15"/><rect class="seg on" x="43" y="26.5" width="14" height="3"/><rect class="seg" x="67" y="8" width="14" height="3"/><rect class="seg" x="81" y="30" width="3" height="15"/><rect class="seg" x="67" y="45" width="14" height="3"/><rect class="seg" x="64" y="30" width="3" height="15"/><rect class="seg" x="64" y="11" width="3" height="15"/><rect class="seg on" x="67" y="26.5" width="14" height="3"/><rect class="seg" x="101" y="8" width="14" height="3"/><rect class="seg" x="115" y="11" width="3" height="15"/><rect class="seg" x="101" y="45" width="14" height="3"/><rect class="seg" x="98" y="30" width="3" height="15"/><rect class="seg" x="98" y="11" width="3" height="15"/><rect class="seg" x="125" y="8" width="14" height="3"/><rect class="seg" x="139" y="11" width="3" height="15"/><rect class="seg" x="139" y="30" width="3" height="15"/><rect class="seg" x="125" y="45" width="14" height="3"/><rect class="seg" x="122" y="30" width="3" height="15"/><rect class="seg" x="122" y="11" width="3" height="15"/><rect class="seg on" x="125" y="26.5" width="14" height="3"/><rect class="seg" x="159" y="8" width="14" height="3"/><rect class="seg" x="173" y="11" width="3" height="15"/><rect class="seg" x="173" y="30" width="3" height="15"/><rect class="seg" x="159" y="45" width="14" height="3"/><rect class="seg" x="197" y="11" width="3" height="15"/><rect class="seg" x="197" y="30" width="3" height="15"/><rect class="seg" x="183" y="45" width="14" height="3"/><rect class="seg" x="180" y="30" width="3" height="15"/><rect class="seg" x="180" y="11" width="3" height="15"/><rect class="seg on" x="183" y="26.5" width="14" height="3"/><rect class="seg" x="217" y="8" width="14" height="3"/><rect class="seg" x="231" y="11" width="3" height="15"/><rect class="seg" x="231" y="30" width="3" height="15"/><rect class="seg" x="217" y="45" width="14" height="3"/><rect class="seg" x="214" y="30" width="3" height="15"/><rect class="seg" x="214" y="11" width="3" height="15"/><rect class="seg" x="241" y="8" width="14" height="3"/><rect class="seg" x="255" y="11" width="3" height="15"/><rect class="seg" x="238" y="30" width="3" height="15"/><rect class="seg" x="238" y="11" width="3" height="15"/><rect class="seg on" x="241" y="26.5" width="14" height="3"/><rect class="seg on" x="89" y="20" width="3" height="3"/><rect class="seg on" x="89" y="33" width="3" height="3"/><rect class="seg on" x="147" y="20" width="3" height="3"/><rect class="seg on" x="147" y="33" width="3" height="3"/></g>
-              <g class="repair__pile"><rect class="seg on" x="150" y="104" width="14" height="3" transform="rotate(-12 150 104)"/><rect class="seg loose" x="165" y="107" width="3" height="15" transform="rotate(70 165 107)"/><rect class="seg loose" x="176" y="102" width="14" height="3" transform="rotate(25 176 102)"/><rect class="seg on" x="190" y="106" width="14" height="3" transform="rotate(-5 190 106)"/><rect class="seg loose" x="200" y="99" width="3" height="15" transform="rotate(-60 200 99)"/><rect class="seg loose" x="212" y="105" width="14" height="3" transform="rotate(40 212 105)"/><rect class="seg on" x="224" y="108" width="3" height="15" transform="rotate(95 224 108)"/><rect class="seg loose" x="158" y="98" width="14" height="3" transform="rotate(8 158 98)"/><rect class="seg loose" x="183" y="96" width="3" height="3" transform="rotate(0 183 96)"/><rect class="seg on" x="236" y="104" width="14" height="3" transform="rotate(-30 236 104)"/><rect class="seg loose" x="205" y="110" width="3" height="3" transform="rotate(0 205 110)"/><rect class="seg on repair__hop" x="186" y="98" width="14" height="3"/></g>
+              
               
               </g></g>
               
@@ -60,7 +67,7 @@
               <g class="zzz"><text x="246" y="34">z</text><text x="256" y="24">z</text><text x="268" y="12">Z</text></g>
               <g class="say say--a" transform="translate(30 14)"><rect width="70" height="20" rx="6"/><path d="M56 18 L70 30 L64 18 Z"/><text x="35" y="14">#@$%!</text></g>
               <g class="say say--b" transform="translate(272 26)"><rect width="34" height="20" rx="6"/><path d="M6 18 L0 30 L14 18 Z"/><text x="17" y="14.5">?!</text></g>
-              <g class="say say--c" transform="translate(30 14)"><rect width="70" height="20" rx="6"/><path d="M56 18 L70 30 L64 18 Z"/><text x="35" y="14">NOT AGAIN</text></g>
+              <g class="say say--c" transform="translate(30 14)"><rect width="70" height="20" rx="6"/><path d="M56 18 L70 30 L64 18 Z"/><text x="35" y="14">#@$%!</text></g>
               <g class="sparks" transform="translate(222 30)"><path d="M0 0 l-10 -6 M0 0 l-12 2 M0 0 l-6 -11 M0 0 l3 -12 M0 0 l9 -8"/></g>
               <path class="repair__ground" d="M-30 113 H350"/>
             </svg>
@@ -71,7 +78,7 @@
               <img class="bld bld-b bld-work" src="assets/img/builder-4-work.webp" alt="" width="232" height="320">
               <img class="bld bld-b bld-weld" src="assets/img/builder-6-weld.webp" alt="" width="284" height="320">
             </div>
-            <p class="repair__note"><span>Countdown under repair</span>Join the waitlist to hear the date first.</p>
+            <p class="repair__note"><strong>Countdown under repair.</strong> The crew is dialing in the drop date. Join the waitlist and you hear it first.</p>
           </div>
           <!-- Real sign-up: posts to the live Shopify store's own newsletter form (deluxe-hq.com), tagged waitlist, into a hidden frame so the visitor stays here -->
           <iframe name="waitlist-sink" title="Waitlist" hidden></iframe>

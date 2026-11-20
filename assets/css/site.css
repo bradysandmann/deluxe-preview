@@ -477,3 +477,38 @@ h3 { font-stretch: 112%; font-weight: 650; font-size: 1.25rem; line-height: 1.2;
 }
 .offer strong { font-stretch: 112%; font-weight: 700; margin-right: 10px; }
 .offer:hover { background: var(--slate); }
+
+/* "Deluxe, all day" carousel: native horizontal scroll with snap, arrows scroll one card */
+.reel {
+  display: grid; grid-auto-flow: column; grid-auto-columns: clamp(260px, 30vw, 420px); gap: 16px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter);
+  padding: 0 var(--gutter) 8px; scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.reel::-webkit-scrollbar { display: none; }
+.reel__item { margin: 0; scroll-snap-align: start; }
+.reel__item img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }
+.reel__item figcaption { margin-top: 12px; font-weight: 600; color: var(--white); }
+.reel__nav { display: flex; gap: 8px; }
+.reel__nav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+@media (max-width: 520px) { .reel { grid-auto-columns: 78vw; } }
+
+/* hero waitlist (after prstudioclothing.com/password): season line, one email field, film keeps playing behind */
+.hero__pitch:has(.waitlist) { width: 100%; }
+.waitlist { max-width: 440px; margin: 0 auto; text-align: center; }
+.waitlist p { margin: 0; }
+.waitlist .waitlist__season { font-size: .8125rem; letter-spacing: .18em; text-transform: uppercase; color: var(--chrome); }
+.waitlist .waitlist__when { margin-top: 6px !important; font-stretch: 125%; font-weight: 800; font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1; text-transform: uppercase; color: var(--white); }
+.waitlist .waitlist__note { margin-top: 10px !important; font-size: .8125rem; letter-spacing: .18em; text-transform: uppercase; color: var(--chrome); }
+.waitlist__form { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 22px; }
+.waitlist__form input {
+  min-height: 52px; padding: 0 16px; border: 1px solid rgba(255,255,255,.35); background: rgba(12,12,13,.55);
+  color: var(--white); font: inherit; backdrop-filter: blur(6px);
+}
+.waitlist__form input::placeholder { color: var(--fog); }
+.waitlist__form button {
+  --cut: 10px; min-height: 52px; padding: 0 22px; border: 0; cursor: pointer;
+  background: var(--white); color: var(--ink); font: inherit; font-weight: 650;
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+}
+.waitlist__form .form-status { grid-column: 1 / -1; min-height: 1.2em; font-size: .875rem; color: var(--white); }
+@media (max-width: 520px) { .waitlist__form { grid-template-columns: 1fr; } }

@@ -22,7 +22,7 @@
 
   <!-- Hero: silent looping real-footage film with the holographic mark over it -->
   <section class="hero" data-hero aria-label="Deluxe">
-    <video class="hero__video" autoplay muted playsinline preload="auto" poster="assets/img/hero-film.jpg" aria-hidden="true" tabindex="-1">
+    <video class="hero__video" autoplay muted loop playsinline preload="auto" poster="assets/img/hero-film.jpg" aria-hidden="true" tabindex="-1">
       <source src="assets/video/hero-film.mp4" type="video/mp4">
     </video>
     <div class="hero__shade"></div>
@@ -37,10 +37,16 @@
     <div class="wrap hero__foot">
       <div class="hero__pitch">
         <h1 class="visually-hidden">Deluxe. Feel Deluxe. Live Deluxe.</h1>
-        <p>Launching soon</p>
-        <div class="split__actions" style="margin-top:0">
-          <a class="btn" href="#early-access">Get early access</a>
-          <a class="btn btn--ghost" href="products.html">See Deluxe</a>
+        <div class="waitlist">
+          <p class="waitlist__season">Season 01</p>
+          <p class="waitlist__when">Coming soon</p>
+          <p class="waitlist__note">Via waitlist only</p>
+          <form class="waitlist__form" data-form="signup" novalidate>
+            <label class="visually-hidden" for="waitlist-email">Email address</label>
+            <input id="waitlist-email" type="email" name="contact[email]" placeholder="Email address" autocomplete="email" required>
+            <button type="submit">Join the list</button>
+            <p class="form-status" data-status role="status" aria-live="polite"></p>
+          </form>
         </div>
       </div>
       <a class="hero__scroll" href="#range">Scroll</a>
@@ -69,6 +75,29 @@
         </article>
       </div>
     </div>
+  </section>
+
+  <section class="section" aria-labelledby="reel-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="reel-title">Deluxe, all day</h2>
+        <div class="reel__nav"><button class="icon-btn" type="button" data-reel="-1" aria-label="Previous"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><button class="icon-btn" type="button" data-reel="1" aria-label="Next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></div>
+      </div>
+    </div>
+    <div class="reel" data-reel-track tabindex="0" aria-label="Deluxe in different places">
+        <figure class="reel__item"><img src="assets/img/scene-gym.jpg" alt="The Deluxe pouch against a loaded barbell plate on a gym floor, chalk in the air" width="1024" height="1280" loading="lazy"><figcaption>Gym</figcaption></figure>
+        <figure class="reel__item"><img src="assets/img/scene-work.jpg" alt="The Deluxe pouch and a torn stick pack on a busy work desk beside a laptop spreadsheet" width="1024" height="1280" loading="lazy"><figcaption>Work</figcaption></figure>
+        <figure class="reel__item"><img src="assets/img/scene-bar.jpg" alt="The Deluxe pouch on a wet bar top among cocktails at night" width="1024" height="1280" loading="lazy"><figcaption>Bar</figcaption></figure>
+        <figure class="reel__item"><img src="assets/img/scene-club.jpg" alt="The Deluxe pouch on a club booth table under strobe light" width="1024" height="1280" loading="lazy"><figcaption>Club</figcaption></figure>
+        <figure class="reel__item"><img src="assets/img/scene-travel.jpg" alt="A torn Deluxe stick pack and a cup of water on a plane tray table at sunrise" width="1024" height="1280" loading="lazy"><figcaption>Travel</figcaption></figure>
+        <figure class="reel__item"><img src="assets/img/scene-morning.jpg" alt="The Deluxe pouch and a torn stick pack on a kitchen counter in morning sun" width="1024" height="1280" loading="lazy"><figcaption>Morning after</figcaption></figure>
+    </div>
+    <script>
+      document.querySelectorAll('[data-reel]').forEach((b) => b.addEventListener('click', () => {
+        const t = document.querySelector('[data-reel-track]');
+        t.scrollBy({ left: +b.dataset.reel * t.querySelector('.reel__item').offsetWidth * 1.05, behavior: 'smooth' });
+      }));
+    </script>
   </section>
 
   <div data-include="signup"></div>

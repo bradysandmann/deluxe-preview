@@ -110,7 +110,7 @@
       <section class="section section--light" id="early-access" aria-labelledby="signup-title">
         <div class="wrap signup">
           <div class="signup__media cut">
-            <img src="assets/img/gen-crew.jpg" alt="Friends at a rooftop party at night, one holding the Deluxe pouch up to the camera" width="896" height="1120" loading="lazy">
+            <img src="assets/img/scene-morning.jpg" alt="The Deluxe pouch and a torn stick pack on a kitchen counter in morning sun" width="1024" height="1280" loading="lazy">
           </div>
           <div>
             <h2 id="signup-title">Get early access</h2>

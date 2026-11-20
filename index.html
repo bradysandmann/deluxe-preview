@@ -117,20 +117,11 @@
                 const WORD = ['efhijkl', 'adefg', 'def', 'bcdef', 'xy', 'adefg'];   // D E L U X E
                 const mid = digits.slice(1, 7), ends = [digits[0], digits[7]];
                 ends.forEach((b) => b.classList.add('nuke__end'));   // "make 0s disappear during that": the end digits vanish fully (CSS .is-word .nuke__end)
-                // while the word shows, the six letters close ranks into one evenly spaced, centred word (layout offsets, so it is not thrown off by the transforms)
-                // each unit row is position:relative, so sum offsets up to the stack to get comparable x positions
-                const xOf = (el) => { let x = 0; for (let e = el; e && e !== stack; e = e.offsetParent) x += e.offsetLeft; return x; };
+                // Brady: "it's spazzing out and not clean, it's shrinking to fit", "it should remain cleanly, countdown and everything should stay":
+                // letters change IN PLACE (no sliding), colons and labels stay, one smooth fade in, a hold, one smooth fade out
                 const word = (on) => { stack.classList.toggle('is-word', on); mid.forEach((b, j) => show(b, on ? WORD[j] : real(b)));
-                  ends.forEach((b) => show(b, on ? '' : real(b)));
-                  const xs = mid.map(xOf), w = mid[0].offsetWidth, p = xs[2] - xs[1];   // p: digit-to-digit step inside one pair
-                  const start = (xs[0] + xs[5] + w) / 2 - (p * 5 + w) / 2;
-                  mid.forEach((b, j) => { b.style.transform = on ? 'translateX(' + (start + j * p - xs[j]).toFixed(1) + 'px)' : ''; }); };
-                const flash = () => {
-                  const seq = [90, 70, 110, 60, 1000, 60, 90];   // word, digits, word, digits, word held, digits, word, then digits
-                  let k = 0;
-                  const next = () => { if (k < seq.length) { word(k % 2 === 0); setTimeout(next, seq[k++]); } else { word(false); setTimeout(flash, 3000 + Math.random() * 2000); } };
-                  next();
-                };
+                  ends.forEach((b) => show(b, on ? '' : real(b))); };
+                const flash = () => { word(true); setTimeout(() => { word(false); setTimeout(flash, 3000 + Math.random() * 2000); }, 1300); };
                 setTimeout(flash, 2600);   // "make it happen more frequent": every 3-5 s
               })();
             </script>

@@ -20,12 +20,9 @@
 .nuke__stack .shine { opacity: 0; transition: opacity .07s linear; }
 .nuke__stack .lit.on, .nuke__stack .shine.on { opacity: 1; }
 .nuke__stack .nuke__row b svg { filter: drop-shadow(0 0 .6px rgba(255, 255, 255, .7)) drop-shadow(0 0 7px rgba(255, 255, 255, .16)); }
-/* DELUXE moment: the colons and unit labels step back so the word reads */
-.nuke__stack .nuke__sep, .nuke__stack .nuke__row[data-l]::after { transition: opacity .06s linear; }
-.nuke__stack.is-word .nuke__sep, .nuke__stack.is-word .nuke__row[data-l]::after { opacity: 0; }
-.nuke__stack .nuke__end { transition: opacity .06s linear; }
-.nuke__stack .nuke__row b { transition: transform .08s ease-out; }   /* letters slide together for the DELUXE moment */
-.nuke__stack.is-word .nuke__end { opacity: 0; }   /* the end zeros disappear completely, ghost segments too */
+/* DELUXE moment: letters change in place, colons and labels stay; only the end zeros disappear (ghost segments too) */
+.nuke__stack .nuke__end { transition: opacity .12s linear; }
+.nuke__stack.is-word .nuke__end { opacity: 0; }
 .nuke__stack .nuke__row[data-l]::after { content: attr(data-l); position: static; transform: none;
   font: 700 max(9px, .19em)/1 Archivo, sans-serif; letter-spacing: .3em; text-transform: uppercase; color: var(--fog); }
 /* colon: two chrome dots centred on the digit height */

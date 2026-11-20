@@ -591,3 +591,24 @@ body[data-page="gate"] [data-topbar] { display: none !important; }
 .bB-head :is(.b-white, .b-eye) { transform-box: fill-box; transform-origin: center; animation: bEyes 8s linear infinite; }
 @keyframes bEyes { 0%,45.5% { transform: scaleY(.12); } 46%,86% { transform: scaleY(1); } 88%,100% { transform: scaleY(.12); } }
 @media (prefers-reduced-motion: reduce) { .bB-head :is(.b-white, .b-eye) { transform: scaleY(.12); } }
+
+/* rendered builder poses laid over the repair SVG (viewBox -40..360 x 0..120); same 8 s timeline as the SVG parts */
+.repair-stage { position: relative; width: min(400px, 92vw); margin: 8px auto 0; }
+.repair-stage .repair { width: 100%; margin: 0; }
+.bld { position: absolute; bottom: 5%; height: 70%; width: auto; transform: translateX(-50%); animation: 8s linear infinite; pointer-events: none;
+  filter: drop-shadow(0 6px 6px rgba(0,0,0,.45)); }
+.bld-a { left: 37%; } .bld-b { left: 76%; }
+.bld-hammer { animation-name: pHammer; } .bld-throw { animation-name: pThrow; }
+.bld-sleep { animation-name: pSleep; } .bld-work { animation-name: pWork; }
+@keyframes pHammer { 0%,4%,8%,12%,16%,20%,24% { opacity: 1; transform: translateX(-50%) rotate(0); }
+  2%,6%,10%,14%,18%,22%,26% { opacity: 1; transform: translateX(-50%) translateY(3%) rotate(4deg); }
+  29.9% { opacity: 1; transform: translateX(-50%); } 30%,85.9% { opacity: 0; } 86%,100% { opacity: 1; transform: translateX(-50%); }
+  88%,92%,96% { transform: translateX(-50%) translateY(3%) rotate(4deg); } 90%,94%,98% { transform: translateX(-50%); } }
+@keyframes pThrow { 0%,29.9% { opacity: 0; transform: translateX(-50%); } 30% { opacity: 1; transform: translateX(-56%) rotate(-4deg); }
+  37% { opacity: 1; transform: translateX(-46%) rotate(5deg); } 40%,85.9% { opacity: 1; transform: translateX(-50%) rotate(0); } 86%,100% { opacity: 0; } }
+@keyframes pSleep { 0%,45.9% { opacity: 1; transform: translateX(-50%) scaleY(1); } 20% { transform: translateX(-50%) scaleY(.985); }
+  46%,87.9% { opacity: 0; } 88%,100% { opacity: 1; transform: translateX(-50%); } }
+@keyframes pWork { 0%,45.9% { opacity: 0; transform: translateX(-50%); } 46% { opacity: 1; transform: translateX(-50%) translateY(-6%); }
+  50%,58%,66%,74%,82% { opacity: 1; transform: translateX(-50%) rotate(-3deg); } 54%,62%,70%,78% { opacity: 1; transform: translateX(-50%) rotate(3deg); }
+  87.9% { opacity: 1; } 88%,100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .bld { animation: none !important; } .bld-throw, .bld-work { opacity: 0; } }

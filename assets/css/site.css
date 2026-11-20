@@ -612,3 +612,44 @@ body[data-page="gate"] [data-topbar] { display: none !important; }
   50%,58%,66%,74%,82% { opacity: 1; transform: translateX(-50%) rotate(-3deg); } 54%,62%,70%,78% { opacity: 1; transform: translateX(-50%) rotate(3deg); }
   87.9% { opacity: 1; } 88%,100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .bld { animation: none !important; } .bld-throw, .bld-work { opacity: 0; } }
+
+/* 20 s repair scene (overrides the 8 s loop above). Seconds: 0-4 nap + hammering, 4-5 swear + throw, 5-6 bonk,
+   6-10 wrench + lift (segment 1 fixed at 9 s), 10-14 weld (segment 2 fixed at 13 s), 14-17 admire, 17-20 piece falls, swear, nap */
+.repair :is(.flyer, .zzz, .say, .sparks), .repair .fix, .bld { animation-duration: 20s !important; animation-timing-function: linear; animation-iteration-count: infinite; }
+.repair .fix { fill: rgba(255,255,255,.14); animation-name: fixes; transform-box: fill-box; transform-origin: center; }
+.repair .fix2 { animation-name: fixes2; }
+@keyframes fixes { 0%,44.9% { fill: rgba(255,255,255,.14); filter: none; transform: none; } 45% { fill: #fff; filter: drop-shadow(0 0 10px #fff); }
+  48%,84.9% { fill: #fff; filter: drop-shadow(0 0 5px rgba(255,255,255,.4)); transform: none; } 85% { transform: translateY(0) rotate(0); }
+  90%,100% { fill: rgba(255,255,255,.5); filter: none; transform: translateY(78px) rotate(-25deg); } }
+@keyframes fixes2 { 0%,64.9% { fill: rgba(255,255,255,.14); filter: none; } 65% { fill: #fff; filter: drop-shadow(0 0 10px #fff); } 68%,100% { fill: #fff; filter: drop-shadow(0 0 5px rgba(255,255,255,.4)); } }
+.sparks path { stroke: #fff; stroke-width: 1.8; stroke-linecap: round; }
+.sparks { opacity: 0; animation-name: sparks20; }
+@keyframes sparks20 { 0%,51.9% { opacity: 0; } 52%,53%,55%,57%,59%,61%,63% { opacity: 1; } 54%,56%,58%,60%,62% { opacity: .2; } 64%,100% { opacity: 0; } }
+.zzz { animation-name: zzz20 !important; }
+@keyframes zzz20 { 0% { opacity: 1; transform: translateY(0); } 18% { opacity: 1; transform: translateY(-6px); } 22%,90% { opacity: 0; transform: translateY(0); } 94%,100% { opacity: 1; } }
+.say--a { animation-name: say20a !important; } .say--b { animation-name: say20b !important; } .say--c { animation-name: say20c; opacity: 0; }
+@keyframes say20a { 0%,18.9% { opacity: 0; } 19%,25% { opacity: 1; } 26%,100% { opacity: 0; } }
+@keyframes say20b { 0%,25.9% { opacity: 0; } 26%,31% { opacity: 1; } 32%,100% { opacity: 0; } }
+@keyframes say20c { 0%,85.9% { opacity: 0; } 86%,92% { opacity: 1; } 93%,100% { opacity: 0; } }
+.flyer { animation-name: fly20 !important; }
+@keyframes fly20 { 0%,22.9% { opacity: 0; transform: translate(150px,50px) rotate(0); } 23% { opacity: 1; transform: translate(150px,50px) rotate(0); }
+  26% { opacity: 1; transform: translate(262px,44px) rotate(540deg); } 28% { opacity: 1; transform: translate(250px,100px) rotate(620deg); }
+  49% { opacity: 1; transform: translate(250px,100px) rotate(620deg); } 50%,100% { opacity: 0; transform: translate(250px,100px) rotate(620deg); } }
+.bld-lift, .bld-weld { opacity: 0; }
+.bld-weld { left: 66%; }
+.bld-hammer { animation-name: h20 !important; } .bld-throw { animation-name: t20 !important; } .bld-lift { animation-name: l20; }
+.bld-sleep { animation-name: s20 !important; } .bld-work { animation-name: w20 !important; } .bld-weld { animation-name: we20; }
+@keyframes h20 { 0%,3%,6%,9%,12%,15%,18% { opacity: 1; transform: translateX(-50%); } 1.5%,4.5%,7.5%,10.5%,13.5%,16.5% { opacity: 1; transform: translateX(-50%) translateY(3%) rotate(4deg); }
+  19.9% { opacity: 1; } 20%,49.9% { opacity: 0; } 50% { opacity: 1; transform: translateX(-50%); } 53%,59%,65% { transform: translateX(-50%) translateY(3%) rotate(4deg); } 56%,62%,68% { transform: translateX(-50%); }
+  70%,85.9% { opacity: 1; transform: translateX(-50%); } 86%,92.9% { opacity: 0; } 93%,100% { opacity: 1; transform: translateX(-50%); } }
+@keyframes t20 { 0%,19.9% { opacity: 0; transform: translateX(-50%); } 20% { opacity: 1; transform: translateX(-56%) rotate(-4deg); } 23% { opacity: 1; transform: translateX(-46%) rotate(5deg); }
+  29.9% { opacity: 1; transform: translateX(-50%); } 30%,85.9% { opacity: 0; } 86% { opacity: 1; transform: translateX(-50%) rotate(-3deg); } 92% { opacity: 1; transform: translateX(-50%) rotate(3deg); } 92.9% { opacity: 1; } 93%,100% { opacity: 0; } }
+@keyframes l20 { 0%,29.9% { opacity: 0; transform: translateX(-50%) translateY(0); } 30% { opacity: 1; } 36%,42% { opacity: 1; transform: translateX(-50%) translateY(-4%); } 39%,44% { opacity: 1; transform: translateX(-50%) translateY(0); } 49.9% { opacity: 1; } 50%,100% { opacity: 0; } }
+@keyframes s20 { 0%,25.9% { opacity: 1; transform: translateX(-50%) scaleY(1); } 12% { transform: translateX(-50%) scaleY(.985); } 26%,89.9% { opacity: 0; } 90%,100% { opacity: 1; transform: translateX(-50%); } }
+@keyframes w20 { 0%,25.9% { opacity: 0; transform: translateX(-50%); } 26% { opacity: 1; transform: translateX(-50%) translateY(-6%); }
+  29%,33%,37%,41%,45% { opacity: 1; transform: translateX(-50%) rotate(-3deg); } 31%,35%,39%,43%,47% { opacity: 1; transform: translateX(-50%) rotate(3deg); }
+  49.9% { opacity: 1; } 50%,69.9% { opacity: 0; } 70% { opacity: 1; transform: translateX(-50%); } 89.9% { opacity: 1; } 90%,100% { opacity: 0; } }
+@keyframes we20 { 0%,49.9% { opacity: 0; transform: translateX(-50%); } 50%,69.9% { opacity: 1; transform: translateX(-50%); } 70%,100% { opacity: 0; } }
+.waitlist .repair__note { margin-top: 12px !important; font-size: .8125rem; line-height: 1.5; color: var(--fog); max-width: none; }
+.repair__note span { display: block; margin-bottom: 2px; font-size: .75rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--white); }
+@media (prefers-reduced-motion: reduce) { .bld-lift, .bld-weld, .say--c, .sparks { opacity: 0 !important; } .repair .fix { animation: none !important; } }

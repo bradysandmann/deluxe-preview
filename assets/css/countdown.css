@@ -27,3 +27,48 @@
 body[data-page="gate"] .hero { flex-direction: column; justify-content: center; align-items: stretch; gap: clamp(14px, 2.6vh, 34px); }
 body[data-page="gate"] .hero .holo { position: relative; inset: auto; flex: none; }
 body[data-page="gate"] .hero__foot { flex: none; justify-content: center; padding-bottom: 0; }
+
+/* Brady 2026-11-20: "nothing should be pure white or like grey but like the chrome silvery feel, with a bit of the shine
+   the DELUXE has, the countdown too"; "make join waitlist more clear and lighter"; "email box angled like the logo". */
+body[data-page="gate"] { --chrome-text: linear-gradient(180deg, #f1f3f6 0%, #cfd4da 40%, #8a8f97 52%, #b7bcc3 60%, #e9ecef 100%); }
+.nuke__stack .shine { pointer-events: none; }
+body[data-page="gate"] .waitlist .countdown__label,
+body[data-page="gate"] .nuke__stack .nuke__row[data-l]::after {
+  background: var(--chrome-text); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+body[data-page="gate"] .nuke__stack .nuke__sep::before, body[data-page="gate"] .nuke__stack .nuke__sep::after { background: var(--chrome-text); }
+
+/* form: the field and the button lean forward like the DELUXE wordmark */
+body[data-page="gate"] .waitlist__form { --slant: 14px; gap: 10px; }
+body[data-page="gate"] .waitlist__field { position: relative; display: block; }
+/* the chrome edge is a 1px RING (outer parallelogram minus inner one, evenodd), so the field itself stays see-through glass */
+body[data-page="gate"] .waitlist__field::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, #f1f3f6, #9ba0a8 48%, #e9ecef);
+  clip-path: polygon(evenodd, var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%, var(--slant) 0,
+    calc(var(--slant) + .8px) 1px, calc(100% - 1.3px) 1px, calc(100% - var(--slant) - .8px) calc(100% - 1px), 1.3px calc(100% - 1px), calc(var(--slant) + .8px) 1px);
+}
+body[data-page="gate"] .waitlist__field input {
+  display: block; width: 100%; min-height: 52px; margin: 0; padding: 0 calc(var(--slant) + 12px);
+  border: 0; outline: 0; background: rgba(40, 44, 50, .42); color: #e9ecf0; font: inherit; font-weight: 500;
+  backdrop-filter: blur(10px) brightness(1.15); -webkit-backdrop-filter: blur(10px) brightness(1.15);
+  clip-path: polygon(var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+}
+body[data-page="gate"] .waitlist__field input::placeholder { color: #c9ced5; }
+body[data-page="gate"] .waitlist__field:focus-within::after { background: linear-gradient(100deg, #ffffff, #c9ced5 48%, #f4f6f8); }
+body[data-page="gate"] .waitlist__field:focus-within input { background: rgba(48, 53, 60, .5); }
+body[data-page="gate"] .waitlist__form button {
+  position: relative; overflow: hidden; min-height: 52px; padding: 0 calc(var(--slant) + 20px);
+  background: linear-gradient(180deg, #f2f4f7 0%, #d6dadf 38%, #9ba0a8 52%, #c3c8ce 62%, #edf0f3 100%);
+  color: #101113; font-weight: 750; letter-spacing: .02em;
+  clip-path: polygon(var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+}
+/* the logo's light sweep, on the button */
+body[data-page="gate"] .waitlist__form button::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .8) 50%, transparent 58%) no-repeat; background-size: 320% 100%;
+  animation: holo-sweep 6s var(--ease) infinite;
+}
+body[data-page="gate"] .waitlist__form button:hover { filter: brightness(1.06); }
+body[data-page="gate"] .waitlist__form .form-status { color: #dfe3e8; }
+@media (prefers-reduced-motion: reduce) { body[data-page="gate"] .waitlist__form button::after { animation: none; opacity: 0; } }

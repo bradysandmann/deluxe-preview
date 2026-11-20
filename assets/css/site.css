@@ -467,3 +467,13 @@ h3 { font-stretch: 112%; font-weight: 650; font-size: 1.25rem; line-height: 1.2;
   .holo__sweep { display: none; }
   * { transition-duration: .01ms !important; }
 }
+
+/* subscription offer line above the packs on the home page */
+.offer {
+  --cut: 12px;
+  display: block; margin: 0 0 16px; padding: 18px 22px;
+  background: var(--ink); color: var(--white); text-decoration: none; font-size: 1.0625rem;
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+}
+.offer strong { font-stretch: 112%; font-weight: 700; margin-right: 10px; }
+.offer:hover { background: var(--slate); }

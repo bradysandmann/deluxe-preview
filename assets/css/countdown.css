@@ -38,37 +38,46 @@ body[data-page="gate"] .nuke__stack .nuke__row[data-l]::after {
 }
 body[data-page="gate"] .nuke__stack .nuke__sep::before, body[data-page="gate"] .nuke__stack .nuke__sep::after { background: var(--chrome-text); }
 
-/* form: the field and the button lean forward like the DELUXE wordmark */
-body[data-page="gate"] .waitlist__form { --slant: 14px; gap: 10px; }
-body[data-page="gate"] .waitlist__field { position: relative; display: block; }
-/* the chrome edge is a 1px RING (outer parallelogram minus inner one, evenodd), so the field itself stays see-through glass */
-body[data-page="gate"] .waitlist__field::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(100deg, #f1f3f6, #9ba0a8 48%, #e9ecef);
+/* form: the field and the button lean forward like the DELUXE wordmark. Brady 2026-11-20: "waitlist doesn't need to be as
+   colorful and chrome as the deluxe logo, a bit more transparent, include the glitchy lines in the deluxe logo": both are
+   see-through glass with a quiet chrome edge, the logo's scanlines run across them, and the form twitches like the mark. */
+body[data-page="gate"] .waitlist__form { --slant: 14px; --para: polygon(var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+  gap: 10px; animation: holo-flicker 9s steps(1) infinite; }
+body[data-page="gate"] :is(.waitlist__field, .waitlist__cta) { position: relative; display: block; }
+/* the 1px edge is a RING (outer parallelogram minus inner one, evenodd), so the glass inside stays see-through */
+body[data-page="gate"] :is(.waitlist__field, .waitlist__cta)::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background: linear-gradient(100deg, rgba(236, 239, 243, .62), rgba(160, 165, 173, .32) 48%, rgba(230, 233, 237, .55));
   clip-path: polygon(evenodd, var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%, var(--slant) 0,
     calc(var(--slant) + .8px) 1px, calc(100% - 1.3px) 1px, calc(100% - var(--slant) - .8px) calc(100% - 1px), 1.3px calc(100% - 1px), calc(var(--slant) + .8px) 1px);
 }
+/* the logo's scanlines, drifting the same way */
+body[data-page="gate"] :is(.waitlist__field, .waitlist__cta)::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1; clip-path: var(--para);
+  background: repeating-linear-gradient(to bottom, rgba(12, 12, 13, .2) 0 1px, transparent 1px 4px);
+  animation: holo-scan 9s linear infinite;
+}
 body[data-page="gate"] .waitlist__field input {
   display: block; width: 100%; min-height: 52px; margin: 0; padding: 0 calc(var(--slant) + 12px);
-  border: 0; outline: 0; background: rgba(40, 44, 50, .42); color: #e9ecf0; font: inherit; font-weight: 500;
-  backdrop-filter: blur(10px) brightness(1.15); -webkit-backdrop-filter: blur(10px) brightness(1.15);
-  clip-path: polygon(var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+  border: 0; outline: 0; background: rgba(205, 211, 219, .1); color: #e9ecf0; font: inherit; font-weight: 500;
+  backdrop-filter: blur(10px) brightness(1.12); -webkit-backdrop-filter: blur(10px) brightness(1.12); clip-path: var(--para);
 }
-body[data-page="gate"] .waitlist__field input::placeholder { color: #c9ced5; }
-body[data-page="gate"] .waitlist__field:focus-within::after { background: linear-gradient(100deg, #ffffff, #c9ced5 48%, #f4f6f8); }
-body[data-page="gate"] .waitlist__field:focus-within input { background: rgba(48, 53, 60, .5); }
-body[data-page="gate"] .waitlist__form button {
-  position: relative; overflow: hidden; min-height: 52px; padding: 0 calc(var(--slant) + 20px);
-  background: linear-gradient(180deg, #f2f4f7 0%, #d6dadf 38%, #9ba0a8 52%, #c3c8ce 62%, #edf0f3 100%);
-  color: #101113; font-weight: 750; letter-spacing: .02em;
-  clip-path: polygon(var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+body[data-page="gate"] .waitlist__field input::placeholder { color: #c3c8cf; }
+body[data-page="gate"] .waitlist__field:focus-within input { background: rgba(205, 211, 219, .16); }
+body[data-page="gate"] .waitlist__field:focus-within::after,
+body[data-page="gate"] .waitlist__cta:hover::after { background: linear-gradient(100deg, rgba(245, 247, 249, .9), rgba(185, 190, 197, .55) 48%, rgba(240, 242, 245, .85)); }
+body[data-page="gate"] .waitlist__cta button {
+  position: relative; overflow: hidden; display: block; width: 100%; min-height: 52px; padding: 0 calc(var(--slant) + 20px); border: 0;
+  background: linear-gradient(180deg, rgba(236, 239, 243, .32), rgba(196, 202, 209, .2) 52%, rgba(232, 235, 239, .28));
+  color: #eef1f4; font-weight: 700; letter-spacing: .03em; text-shadow: 0 1px 2px rgba(12, 12, 13, .45);
+  backdrop-filter: blur(10px) brightness(1.18); -webkit-backdrop-filter: blur(10px) brightness(1.18); clip-path: var(--para);
 }
-/* the logo's light sweep, on the button */
-body[data-page="gate"] .waitlist__form button::after {
-  content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .8) 50%, transparent 58%) no-repeat; background-size: 320% 100%;
+body[data-page="gate"] .waitlist__cta button::after {   /* a soft pass of the logo's light sweep */
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .55;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .7) 50%, transparent 58%) no-repeat; background-size: 320% 100%;
   animation: holo-sweep 6s var(--ease) infinite;
 }
-body[data-page="gate"] .waitlist__form button:hover { filter: brightness(1.06); }
+body[data-page="gate"] .waitlist__cta button:hover { background: linear-gradient(180deg, rgba(240, 243, 246, .42), rgba(205, 211, 218, .28) 52%, rgba(236, 239, 243, .38)); }
 body[data-page="gate"] .waitlist__form .form-status { color: #dfe3e8; }
-@media (prefers-reduced-motion: reduce) { body[data-page="gate"] .waitlist__form button::after { animation: none; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { body[data-page="gate"] .waitlist__form, body[data-page="gate"] .waitlist__cta button::after,
+  body[data-page="gate"] :is(.waitlist__field, .waitlist__cta)::before { animation: none; } }

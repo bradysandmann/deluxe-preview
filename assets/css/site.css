@@ -539,30 +539,39 @@ body[data-page="gate"] .site-header__bar { justify-content: center; }
 body[data-page="gate"] .hero__scroll { display: none; }
 body[data-page="gate"] [data-topbar] { display: none !important; }
 
-/* countdown "under repair" (no launch date yet): a broken seven-segment clock and a two-person crew, drawn in SVG */
+/* countdown "under repair" (no launch date yet): a small broken clock, its pieces in a pile, and a chunky little builder hammering away */
 .countdown--repair { margin: 6px auto 0; }
-.repair { display: block; width: min(440px, 88vw); height: auto; margin: 10px auto 0; overflow: visible; }
-.repair .seg { fill: rgba(255,255,255,.12); }
-.repair .seg.on { fill: var(--white); filter: drop-shadow(0 0 6px rgba(255,255,255,.35)); }
-.repair__ladder path, .repair__worker path, .repair__ground { fill: none; stroke: var(--chrome); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.repair__ground { stroke: rgba(255,255,255,.18); stroke-width: 1.5; }
-.repair__worker circle { fill: var(--chrome); }
-.repair__worker .hat { fill: var(--white); stroke: none; }
-.repair__dangle { transform-origin: 275px 12px; animation: rp-swing 2.4s ease-in-out infinite; }
-.repair__dangle rect { transform-box: fill-box; }
-.repair__sparks path { stroke: var(--white); stroke-width: 2; stroke-linecap: round; animation: rp-spark 1.1s steps(2) infinite; }
-.repair__arm { transform-origin: 0 -4px; transform-box: view-box; animation: rp-wrench .5s ease-in-out infinite alternate; }
-.repair__worker--walk { animation: rp-walk 6s ease-in-out infinite alternate; }
+.repair { display: block; width: min(300px, 76vw); height: auto; margin: 8px auto 0; overflow: visible; }
+.repair .seg { fill: rgba(255,255,255,.14); }
+.repair .seg.on { fill: var(--white); filter: drop-shadow(0 0 5px rgba(255,255,255,.35)); }
+.repair .seg.loose { fill: rgba(255,255,255,.5); }
+.repair__ground { stroke: rgba(255,255,255,.18); stroke-width: 1.5; fill: none; }
+.builder * { stroke: #0c0c0d; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.builder .b-body { fill: #b9bcc2; }
+.builder .b-leg, .builder .b-limb { fill: #8a8d93; }
+.builder .b-limb { fill: none; stroke: #b9bcc2; stroke-width: 6; }
+.builder .b-boot { fill: #3a3c40; }
+.builder .b-head { fill: #e6e6e6; }
+.builder .b-beard { fill: #ffffff; }
+.builder .b-eye { fill: #0c0c0d; stroke: none; }
+.builder .b-hat { fill: #ffffff; }
+.builder .b-belt { stroke: #3a3c40; stroke-width: 3; }
+.builder .b-handle { stroke: #6b5a46; stroke-width: 3.5; }
+.builder .b-hammer { fill: #8a8d93; }
+.b-arm { transform-origin: 12px 80px; transform-box: view-box; animation: b-swing .9s cubic-bezier(.5,0,.75,0) infinite; }
+.builder { animation: b-bob .9s ease-in-out infinite; }
+.repair__hop { animation: r-hop .9s ease-out infinite; transform-box: fill-box; }
+.repair__dust circle { fill: rgba(255,255,255,.5); animation: r-dust .9s ease-out infinite; transform-box: fill-box; transform-origin: center; }
 .repair__clock .seg.on { animation: rp-flicker 4s steps(1) infinite; }
 .repair__clock .seg.on:nth-child(5n) { animation-delay: 1.3s; }
-.waitlist .repair__note { margin-top: 12px !important; font-size: .9375rem; line-height: 1.45; color: var(--chrome); max-width: 34ch; margin-inline: auto !important; }
+.waitlist .repair__note { margin-top: 10px !important; font-size: .9375rem; line-height: 1.45; color: var(--chrome); max-width: 34ch; margin-inline: auto !important; }
 .repair__note strong { display: block; color: var(--white); font-weight: 650; letter-spacing: .02em; }
-@keyframes rp-swing { 0%, 100% { transform: rotate(18deg); } 50% { transform: rotate(32deg); } }
-@keyframes rp-spark { 0% { opacity: 1; } 50% { opacity: 0; } }
-@keyframes rp-wrench { from { transform: rotate(0deg); } to { transform: rotate(-25deg); } }
-@keyframes rp-walk { from { transform: translate(60px, 128px); } to { transform: translate(170px, 128px); } }
+@keyframes b-swing { 0% { transform: rotate(-55deg); } 70% { transform: rotate(25deg); } 100% { transform: rotate(-55deg); } }
+@keyframes b-bob { 0%, 100% { transform: translate(112px, 0); } 70% { transform: translate(112px, 1.5px); } }
+@keyframes r-hop { 0%, 65% { transform: translateY(0) rotate(0); } 80% { transform: translateY(-9px) rotate(-30deg); } 100% { transform: translateY(0) rotate(0); } }
+@keyframes r-dust { 0%, 66% { opacity: 0; transform: scale(.4); } 75% { opacity: .8; } 100% { opacity: 0; transform: scale(1.8); } }
 @keyframes rp-flicker { 0%, 88%, 92%, 100% { opacity: 1; } 90% { opacity: .2; } }
-@media (prefers-reduced-motion: reduce) { .repair * { animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .repair *, .builder { animation: none !important; } }
 @media (max-aspect-ratio: 4/5) {
   .hero:has(.countdown--repair) .holo { inset: 0 0 48% 0; }
   .hero:has(.countdown--repair) .holo__mark { width: min(66vw, 320px); }

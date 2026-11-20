@@ -63,7 +63,7 @@
   window.DELUXE = { ignite: IGNITE, products: PRODUCTS, stick: STICK, productCard, esc };
 
   const page = document.body.dataset.page || '';
-  const NAV = [['home', 'Home', 'index.html'], ['products', 'Products', 'products.html'],
+  const NAV = [['home', 'Home', 'home.html'], ['products', 'Products', 'products.html'],
                ['catalog', 'Catalog', 'catalog.html'], ['contact', 'Contact', 'contact.html']];
   const navLinks = (cls) => NAV.map(([id, label, href]) =>
     `<a${cls ? ` class="${cls}"` : ''} href="${href}"${id === page ? ' aria-current="page"' : ''}>${label}</a>`).join('');
@@ -80,7 +80,7 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h12"/></svg>
             </button>
             <nav class="nav" aria-label="Main">${navLinks('')}</nav>
-            <a class="brand" href="index.html" aria-label="Deluxe home">
+            <a class="brand" href="home.html" aria-label="Deluxe home">
               <img src="assets/img/logo-wordmark.png" alt="Deluxe" width="640" height="137">
             </a>
             <div class="site-header__tools">
@@ -146,7 +146,7 @@
             </div>
             <div>
               <h3>Help</h3>
-              <ul><li><a href="contact.html">Contact</a></li><li><a href="index.html#faq">Questions</a></li><li><a href="https://deluxe-hq.com/policies/privacy-policy">Terms and policies</a></li></ul>
+              <ul><li><a href="contact.html">Contact</a></li><li><a href="home.html#faq">Questions</a></li><li><a href="https://deluxe-hq.com/policies/privacy-policy">Terms and policies</a></li></ul>
             </div>
             <div>
               <h3>Follow</h3>
@@ -211,15 +211,21 @@
   document.addEventListener('submit', (e) => {
     const form = e.target.closest('[data-form]');
     if (!form) return;
-    e.preventDefault();
     const status = form.querySelector('[data-status]');
+    const live = form.dataset.form === 'waitlist';   // the gate's real waitlist: validate here, then let the browser post it
+    if (!live) e.preventDefault();
     const fail = (field, msg) => {
       field.setAttribute('aria-invalid', 'true'); field.focus();
       status.dataset.state = 'error'; status.textContent = msg;
     };
     form.querySelectorAll('[aria-invalid]').forEach((f) => f.removeAttribute('aria-invalid'));
     const email = form.querySelector('input[type="email"]');
-    if (!EMAIL.test(email.value.trim())) return fail(email, 'Enter a valid email address, like name@example.com.');
+    if (!EMAIL.test(email.value.trim())) { e.preventDefault(); return fail(email, 'Enter a valid email address, like name@example.com.'); }
+    if (live) {
+      status.dataset.state = 'ok'; status.textContent = 'You are on the list. We will email you when Season 01 drops.';
+      setTimeout(() => form.reset(), 0);          // after the browser has read the fields
+      return;
+    }
     const message = form.querySelector('textarea[required]');
     if (message && !message.value.trim()) return fail(message, 'Write a message before sending.');
     status.dataset.state = 'ok';

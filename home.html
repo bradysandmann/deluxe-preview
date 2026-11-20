@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Deluxe | Feel Deluxe. Live Deluxe.</title>
+<meta name="description" content="Deluxe is an electrolyte drink mix with energy and vitamins in single-serve stick packs. Launching soon. Join the list for early access.">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/img/favicon-64.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/showroom.css">
+</head>
+<body data-page="home">
+<div data-include="header"></div>
+
+<main id="main">
+
+  <!-- Hero: silent looping real-footage film with the holographic mark over it -->
+  <section class="hero" data-hero aria-label="Deluxe">
+    <video class="hero__video" autoplay muted loop playsinline preload="auto" poster="assets/img/hero-film.jpg" aria-hidden="true" tabindex="-1">
+      <source src="assets/video/hero-film-v.mp4" type="video/mp4" media="(max-aspect-ratio: 4/5)">
+      <source src="assets/video/hero-film.mp4" type="video/mp4">
+    </video>
+    <div class="hero__shade"></div>
+    <div class="holo" aria-hidden="true">
+      <div class="holo__mark">
+        <img class="holo__ghost" src="assets/img/logo-lockup-alpha.png" alt="" width="1167" height="842">
+        <img class="holo__logo" src="assets/img/logo-lockup-alpha.png" alt="" width="1167" height="842">
+        <div class="holo__sweep"></div>
+        <div class="holo__scan"></div>
+      </div>
+    </div>
+    <div class="wrap hero__foot">
+      <div class="hero__pitch">
+        <h1 class="visually-hidden">Deluxe. Feel Deluxe. Live Deluxe.</h1>
+        <div class="waitlist">
+          <!-- LAUNCH DATE IS A PLACEHOLDER (2026-11-19): swap data-launch for the real date before anyone sees it -->
+          <div class="countdown" data-launch="2027-01-01T00:00:00-05:00" role="timer" aria-label="Time until launch">
+            <p class="countdown__label">Season 01 drops in</p>
+            <p class="countdown__digits" aria-hidden="true"><span data-u="d" data-l="Days">00</span><i>:</i><span data-u="h" data-l="Hrs">00</span><i>:</i><span data-u="m" data-l="Min">00</span><i>:</i><span data-u="s" data-l="Sec">00</span></p>
+            <p class="visually-hidden" data-countdown-text></p>
+          </div>
+          <script>
+            (() => {
+              const el = document.querySelector('.countdown'), end = Date.parse(el.dataset.launch);
+              const pad = (n) => String(n).padStart(2, '0'), set = (k, v) => { el.querySelector(`[data-u="${k}"]`).textContent = pad(v); };
+              const tick = () => {
+                const s = Math.max(0, Math.floor((end - Date.now()) / 1000));
+                set('d', Math.floor(s / 86400)); set('h', Math.floor(s / 3600) % 24); set('m', Math.floor(s / 60) % 60); set('s', s % 60);
+                el.querySelector('[data-countdown-text]').textContent = `${Math.floor(s / 86400)} days until launch`;
+                if (s > 0) setTimeout(tick, 1000 - (Date.now() % 1000));
+              };
+              tick();
+            })();
+          </script>
+          <form class="waitlist__form" data-form="signup" novalidate>
+            <label class="visually-hidden" for="waitlist-email">Email address</label>
+            <input id="waitlist-email" type="email" name="contact[email]" placeholder="Email address" autocomplete="email" required>
+            <button type="submit">Join the waitlist</button>
+            <p class="form-status" data-status role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+      <a class="hero__scroll" href="#range">Scroll</a>
+    </div>
+  </section>
+
+  <section class="section section--light" id="range" style="padding-top:clamp(40px,6vw,72px)" aria-labelledby="range-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="range-title">The Deluxe range</h2>
+        <a class="text-link" href="catalog.html">View catalog</a>
+      </div>
+      <a class="offer" href="products.html"><strong>Subscribe monthly</strong> Free welcome kit ($85 value) with your first box, then 10% off every month.</a>
+      <div class="card-grid card-grid--three" data-products="deluxe-30,deluxe-12">
+        <article class="product-card">
+          <div class="product-card__media"><div class="showroom" data-showroom data-shape="stick" data-layout="card" data-front="assets/img/cut/stick-front.webp" data-back="assets/img/cut/stick-back.webp" data-label="Deluxe stick pack"></div></div>
+          <div class="product-card__body">
+            <h3 class="product-card__name"><a href="products.html?view=stick">The stick</a></h3>
+            <p class="product-card__line">One stick pack mixes into 16 to 20 oz of water.</p>
+            <ul class="chips"><li>125mg caffeine</li><li>Zero sugar</li></ul>
+            <div class="product-card__foot">
+              <span class="status">Inside every pack</span>
+              <a class="btn btn--dark btn--sm" href="products.html?view=stick#facts">See the label</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="reel-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="reel-title">Deluxe, all day</h2>
+        <div class="reel__nav"><button class="icon-btn" type="button" data-reel="-1" aria-label="Previous"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><button class="icon-btn" type="button" data-reel="1" aria-label="Next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></div>
+      </div>
+    </div>
+    <div class="reel" data-reel-track tabindex="0" aria-label="Deluxe in different places">
+        <figure class="reel__item"><img src="assets/img/scene-travel.jpg" alt="A torn Deluxe stick pack and a cup of water on a plane tray table at sunrise" width="1024" height="1280" loading="lazy"><figcaption>Travel</figcaption></figure>
+        <figure class="reel__item"><img src="assets/img/scene-bar.jpg" alt="The Deluxe pouch on a wet bar top among cocktails at night" width="1024" height="1280" loading="lazy"><figcaption>Bar</figcaption></figure>
+        <figure class="reel__item"><img src="assets/img/scene-club.jpg" alt="The Deluxe pouch on a club booth table under strobe light" width="1024" height="1280" loading="lazy"><figcaption>Club</figcaption></figure>
+        <figure class="reel__item"><img src="assets/img/scene-morning.jpg" alt="The Deluxe pouch and a torn stick pack on a kitchen counter in morning sun" width="1024" height="1280" loading="lazy"><figcaption>Morning after</figcaption></figure>
+    </div>
+    <script>
+      document.querySelectorAll('[data-reel]').forEach((b) => b.addEventListener('click', () => {
+        const t = document.querySelector('[data-reel-track]');
+        t.scrollBy({ left: +b.dataset.reel * t.querySelector('.reel__item').offsetWidth * 1.05, behavior: 'smooth' });
+      }));
+    </script>
+  </section>
+
+  <div data-include="signup"></div>
+
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq-layout">
+      <h2 id="faq-title">Questions</h2>
+      <div class="faq">
+        <details>
+          <summary>What is Deluxe?</summary>
+          <p>An electrolyte drink mix with energy and vitamins, in single-serve stick packs. The first one is called Ignite. Empty a stick into 16 to 20 oz of water, then stir or shake until dissolved.</p>
+        </details>
+        <details>
+          <summary>How is it different from other electrolyte mixes?</summary>
+          <p>Most are made only to rehydrate you. Deluxe has the electrolytes too, then adds 125mg of caffeine with L-theanine and a set of vitamins, so one stick covers the water and the wake-up.</p>
+        </details>
+        <details>
+          <summary>Is it for the morning after a night out?</summary>
+          <p>That is a big part of why we made it: water and electrolytes, plus caffeine for the fog. It is a drink mix, not a medicine, and it does not treat or prevent a hangover.</p>
+        </details>
+        <details>
+          <summary>How much caffeine is in a stick?</summary>
+          <p>125mg, from green tea extract. That is about one cup of coffee. Each stick also has 250mg of L-theanine. Not recommended for children or individuals sensitive to caffeine, pregnant, or nursing. Healthy adults should limit total daily caffeine intake to 400mg.</p>
+        </details>
+        <details>
+          <summary>When does Deluxe launch?</summary>
+          <p>Soon. Join the early access list and you will hear first.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div data-include="footer"></div>
+
+<script src="assets/js/site.js"></script>
+<script type="module" src="assets/js/showroom.js"></script>
+</body>
+</html>

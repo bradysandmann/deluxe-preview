@@ -531,3 +531,10 @@ h3 { font-stretch: 112%; font-weight: 650; font-size: 1.25rem; line-height: 1.2;
 .countdown__digits [data-l]::after { content: attr(data-l); position: absolute; left: 50%; top: calc(100% + 10px); transform: translateX(-50%);
   font: 600 .625rem/1 Archivo, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--fog); text-shadow: none; }
 .waitlist .countdown { padding-bottom: 22px; }
+
+/* gate page (index.html until launch): just the film, the logo, the countdown and the waitlist */
+body[data-page="gate"] .announce, body[data-page="gate"] .nav, body[data-page="gate"] .nav-toggle,
+body[data-page="gate"] .site-header__bar > :not(.brand) { display: none !important; }
+body[data-page="gate"] .site-header__bar { justify-content: center; }
+body[data-page="gate"] .hero__scroll { display: none; }
+body[data-page="gate"] [data-topbar] { display: none !important; }

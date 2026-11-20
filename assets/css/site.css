@@ -527,3 +527,7 @@ h3 { font-stretch: 112%; font-weight: 650; font-size: 1.25rem; line-height: 1.2;
   .hero:has(.waitlist) .holo { inset: 0 0 38% 0; }
   .hero:has(.waitlist) .holo__mark { width: min(60vw, 560px, calc((max(100svh, 620px) - 560px) * 1.386)); }
 }
+.countdown__digits [data-l] { position: relative; }
+.countdown__digits [data-l]::after { content: attr(data-l); position: absolute; left: 50%; top: calc(100% + 10px); transform: translateX(-50%);
+  font: 600 .625rem/1 Archivo, sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--fog); text-shadow: none; }
+.waitlist .countdown { padding-bottom: 22px; }

@@ -39,41 +39,30 @@
       <div class="hero__pitch">
         <h1 class="visually-hidden">Deluxe. Feel Deluxe. Live Deluxe.</h1>
         <div class="waitlist">
-          <p class="waitlist__season">Season 01</p>
           <!-- LAUNCH DATE IS A PLACEHOLDER (2026-11-19): swap data-launch for the real date before anyone sees it -->
           <div class="countdown" data-launch="2027-01-01T00:00:00-05:00" role="timer" aria-label="Time until launch">
-            <p class="countdown__label"><span class="countdown__dot" aria-hidden="true"></span>T-minus</p>
-            <p class="countdown__digits" aria-hidden="true"><span data-u="d">00</span><i>:</i><span data-u="h">00</span><i>:</i><span data-u="m">00</span><i>:</i><span data-u="s">00</span><i>.</i><span class="countdown__cs" data-u="cs">00</span></p>
-            <p class="countdown__units" aria-hidden="true"><span>Days</span><span>Hrs</span><span>Min</span><span>Sec</span><span></span></p>
+            <p class="countdown__label">Season 01 drops in</p>
+            <p class="countdown__digits" aria-hidden="true"><span data-u="d">00</span><i>:</i><span data-u="h">00</span><i>:</i><span data-u="m">00</span><i>:</i><span data-u="s">00</span></p>
+            <p class="countdown__units" aria-hidden="true"><span>Days</span><span>Hrs</span><span>Min</span><span>Sec</span></p>
             <p class="visually-hidden" data-countdown-text></p>
           </div>
           <script>
             (() => {
               const el = document.querySelector('.countdown'), end = Date.parse(el.dataset.launch);
-              const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-              const u = (k) => el.querySelector(`[data-u="${k}"]`), pad = (n) => String(n).padStart(2, '0');
-              const parts = { d: u('d'), h: u('h'), m: u('m'), s: u('s'), cs: u('cs') }, text = el.querySelector('[data-countdown-text]');
-              let lastSec = -1;
+              const pad = (n) => String(n).padStart(2, '0'), set = (k, v) => { el.querySelector(`[data-u="${k}"]`).textContent = pad(v); };
               const tick = () => {
-                const left = Math.max(0, end - Date.now()), sec = Math.floor(left / 1000);
-                parts.cs.textContent = still ? '00' : pad(Math.floor(left / 10) % 100);
-                if (sec !== lastSec) {
-                  lastSec = sec;
-                  parts.d.textContent = pad(Math.floor(sec / 86400)); parts.h.textContent = pad(Math.floor(sec / 3600) % 24);
-                  parts.m.textContent = pad(Math.floor(sec / 60) % 60); parts.s.textContent = pad(sec % 60);
-                  el.classList.remove('is-tick'); void el.offsetWidth; el.classList.add('is-tick');
-                  if (sec % 60 === 0) text.textContent = `${Math.floor(sec / 86400)} days, ${Math.floor(sec / 3600) % 24} hours, ${Math.floor(sec / 60) % 60} minutes until launch`;
-                }
-                if (left > 0) still ? setTimeout(tick, 1000) : requestAnimationFrame(tick);
+                const s = Math.max(0, Math.floor((end - Date.now()) / 1000));
+                set('d', Math.floor(s / 86400)); set('h', Math.floor(s / 3600) % 24); set('m', Math.floor(s / 60) % 60); set('s', s % 60);
+                el.querySelector('[data-countdown-text]').textContent = `${Math.floor(s / 86400)} days until launch`;
+                if (s > 0) setTimeout(tick, 1000 - (Date.now() % 1000));
               };
               tick();
             })();
           </script>
-          <p class="waitlist__note">Via waitlist only</p>
           <form class="waitlist__form" data-form="signup" novalidate>
             <label class="visually-hidden" for="waitlist-email">Email address</label>
             <input id="waitlist-email" type="email" name="contact[email]" placeholder="Email address" autocomplete="email" required>
-            <button type="submit">Join the list</button>
+            <button type="submit">Join the waitlist</button>
             <p class="form-status" data-status role="status" aria-live="polite"></p>
           </form>
         </div>

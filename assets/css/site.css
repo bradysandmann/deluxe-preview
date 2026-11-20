@@ -513,26 +513,15 @@ h3 { font-stretch: 112%; font-weight: 650; font-size: 1.25rem; line-height: 1.2;
 .waitlist__form .form-status { grid-column: 1 / -1; min-height: 1.2em; font-size: .875rem; color: var(--white); }
 @media (max-width: 520px) { .waitlist__form { grid-template-columns: 1fr; } }
 
-/* launch countdown: mission-control readout, monochrome. Scanlines, a soft glow, a flicker on every second, hundredths running. */
-.countdown { position: relative; margin: 10px auto 4px; padding: 14px 18px 12px; width: max-content; max-width: 100%;
-  background: rgba(12,12,13,.55); backdrop-filter: blur(6px);
-  border-top: 2px solid; border-bottom: 2px solid; border-image: repeating-linear-gradient(-45deg, var(--white) 0 8px, transparent 8px 16px) 2; }
-.countdown::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(255,255,255,.05) 0 1px, transparent 1px 3px); }
-.waitlist .countdown__label { display: flex; align-items: center; justify-content: center; gap: 8px;
-  font: 600 .75rem/1 ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: .3em; text-transform: uppercase; color: var(--chrome); }
-.countdown__dot { width: 7px; height: 7px; background: var(--white); border-radius: 50%; animation: cd-blink 1s steps(1) infinite; }
-.waitlist .countdown__digits { margin-top: 8px !important; display: flex; align-items: baseline; justify-content: center; gap: 2px;
-  font: 700 clamp(2rem, 6vw, 3.6rem)/1 ui-monospace, "Cascadia Mono", Consolas, monospace; font-variant-numeric: tabular-nums;
-  color: var(--white); text-shadow: 0 0 6px rgba(255,255,255,.55), 0 0 22px rgba(255,255,255,.25); }
-.countdown__digits i { font-style: normal; opacity: .55; animation: cd-blink 1s steps(1) infinite; }
-.countdown__digits .countdown__cs { font-size: .55em; opacity: .7; }
-.waitlist .countdown__units { display: grid; grid-template-columns: repeat(4, 1fr) .6fr; margin-top: 6px !important;
-  font: 600 .625rem/1 ui-monospace, Consolas, monospace; letter-spacing: .25em; text-transform: uppercase; color: var(--fog); }
-.countdown.is-tick .countdown__digits { animation: cd-flick .18s linear; }
-@keyframes cd-blink { 50% { opacity: .15; } }
-@keyframes cd-flick { 0% { opacity: .55; transform: translateX(1px); } 40% { opacity: 1; transform: none; } 70% { opacity: .8; } 100% { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .countdown__dot, .countdown__digits i, .countdown.is-tick .countdown__digits { animation: none; } }
+/* launch countdown: just the numbers. Hundredths run, the rest is quiet. */
+.countdown { margin: 0 auto; }
+.waitlist .countdown__label { font-size: .75rem; letter-spacing: .24em; text-transform: uppercase; color: var(--chrome); }
+.waitlist .countdown__digits { margin-top: 10px !important; display: flex; align-items: baseline; justify-content: center; gap: 4px;
+  font: 600 clamp(2.4rem, 6vw, 4rem)/1 ui-monospace, "Cascadia Mono", Consolas, monospace; font-variant-numeric: tabular-nums;
+  color: var(--white); text-shadow: 0 0 18px rgba(255,255,255,.22); }
+.countdown__digits i { font-style: normal; opacity: .35; }
+.waitlist .countdown__units { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 8px !important;
+  font-size: .625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--fog); }
 /* the waitlist + countdown stack is taller than the old buttons: on wide screens the mark sits higher and smaller so they never touch */
 @media (min-aspect-ratio: 4/5) {
   .hero:has(.waitlist) .holo { inset: 0 0 38% 0; }

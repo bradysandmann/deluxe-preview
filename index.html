@@ -43,13 +43,15 @@
           <!-- No launch date yet (Brady 2026-11-19): the countdown stays frozen instead of ticking to a made-up date; the "under repair" note was removed on his word -->
           <div class="countdown countdown--repair">
             <p class="countdown__label">Season 01</p>
-            <!-- Nuclear countdown (Brady 2026-11-19): frozen while there is no launch date. Add data-target="<ISO date>" to .nuke and it ticks, same look on launch day. Builders removed (Brady: "remove the builders completely"). -->
+            <!-- Countdown (Brady 2026-11-20): chrome seven-segment digits on one line, all zeros while there is no launch date; random flicker flips a digit to a random number for a split second. Add data-target="<ISO date>" to .nuke and the same component ticks. -->
             <div class="nuke" aria-hidden="true">
-              <p class="countdown__digits countdown__digits--broken nuke__stack"><span class="nuke__row" data-l="Days"><span><b>4</b><b>2</b></span></span><span class="nuke__row" data-l="Hrs"><span><b>0</b><b>3</b></span></span><span class="nuke__row" data-l="Min"><span><b>3</b><b>4</b></span></span><span class="nuke__row" data-l="Sec"><span><b>2</b><b>2</b></span></span></p>
+              <svg class="nuke__defs" aria-hidden="true" focusable="false"><defs><linearGradient id="nuke-chrome" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="20.4"><stop offset="0" stop-color="#ffffff"/><stop offset=".42" stop-color="#e3e6ea"/><stop offset=".5" stop-color="#8d9198"/><stop offset=".58" stop-color="#c8ccd1"/><stop offset="1" stop-color="#f4f6f8"/></linearGradient></defs></svg>
+              <p class="countdown__digits countdown__digits--broken nuke__stack"><span class="nuke__row" data-l="Days"><span><b>0</b><b>0</b></span></span><i class="nuke__sep"></i><span class="nuke__row" data-l="Hrs"><span><b>0</b><b>0</b></span></span><i class="nuke__sep"></i><span class="nuke__row" data-l="Min"><span><b>0</b><b>0</b></span></span><i class="nuke__sep"></i><span class="nuke__row" data-l="Sec"><span><b>0</b><b>0</b></span></span></p>
             </div>
             <script>
-              (() => {   // still digits that flicker like a failing panel; they tick only once a launch date is set
+              (() => {   // all-zero chrome readout; random flickers flip digits for a split second; ticks only once a launch date is set
                 const root = document.querySelector('.nuke'); if (!root) return;
+                const stack = root.querySelector('.nuke__stack');
                 const rows = [...root.querySelectorAll('.nuke__row')];
                 // seven-segment glyphs: every segment drawn, lit ones get .on (unlit stay faintly visible)
                 const SEG = { a: 'M2.2 1.2 3.2 .2h5.6l1 1-1 1H3.2z', b: 'M10.8 2.2l1 1v5.6l-1 1-1-1V3.2z', c: 'M10.8 10.4l1 1v5.6l-1 1-1-1v-5.6z',
@@ -67,13 +69,15 @@
                   tick(); setInterval(tick, 1000);
                 }
                 if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-                const glitch = () => {
-                  const all = root.querySelectorAll('b'), d = all[Math.floor(Math.random() * all.length)];
-                  d.classList.add('is-drop'); setTimeout(() => d.classList.remove('is-drop'), 90 + Math.random() * 180);
-                  if (Math.random() < .3) { const r = rows[Math.floor(Math.random() * rows.length)]; r.classList.add('is-tear'); setTimeout(() => r.classList.remove('is-tear'), 70); }
-                  setTimeout(glitch, 1400 + Math.random() * 2600);
+                const glitch = () => {   // dim the readout and flip 1-3 random digits to random numbers, then snap back to the real value
+                  const all = [...root.querySelectorAll('b')], n = 1 + Math.floor(Math.random() * Math.random() * 3.2);
+                  const hit = all.sort(() => Math.random() - .5).slice(0, n);
+                  stack.classList.add('is-dim');
+                  hit.forEach((b) => { b.innerHTML = glyph(Math.floor(Math.random() * 10)); b.classList.add('is-flip'); });
+                  setTimeout(() => { stack.classList.remove('is-dim'); hit.forEach((b) => { b.classList.remove('is-flip'); draw(b); }); }, 70 + Math.random() * 110);
+                  setTimeout(glitch, 600 + Math.random() * 2200);
                 };
-                setTimeout(glitch, 1200);
+                setTimeout(glitch, 900);
               })();
             </script>
           </div>

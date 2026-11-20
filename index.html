@@ -116,7 +116,9 @@
                 // "when it goes back to numbers it should go one at a time": the letters revert one by one in random order, each with the same slight flicker.
                 const WORD = ['efhijkl', 'adefg', 'def', 'bcdef', 'xy', 'adefg'];   // D E L U X E
                 const mid = digits.slice(1, 7), ends = [digits[0], digits[7]];
-                const flick = (b, a, c) => { show(b, a); setTimeout(() => show(b, c), 50 + Math.random() * 40); setTimeout(() => show(b, a), 110 + Math.random() * 60); };
+                // "you can't read deluxe with the 0s": the end zeros stay but dim to a ghost during the word, the letters glow brighter (CSS .is-word)
+                ends.forEach((b) => b.classList.add('nuke__end'));
+                const flick =(b, a, c) => { show(b, a); setTimeout(() => show(b, c), 50 + Math.random() * 40); setTimeout(() => show(b, a), 110 + Math.random() * 60); };
                 const flash = () => {
                   stack.classList.add('is-word');
                   busy.forEach((b) => show(b, real(b)));   // any number-flicker in flight snaps back first, so no stray digit shows

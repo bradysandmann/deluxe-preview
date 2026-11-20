@@ -20,7 +20,11 @@
 .nuke__stack .shine { opacity: 0; transition: opacity .07s linear; }
 .nuke__stack .lit.on, .nuke__stack .shine.on { opacity: 1; }
 .nuke__stack .nuke__row b svg { filter: drop-shadow(0 0 .6px rgba(255, 255, 255, .7)) drop-shadow(0 0 7px rgba(255, 255, 255, .16)); }
-/* DELUXE moment: letters change in place; colons, labels and the end zeros all stay */
+/* DELUXE moment: letters change in place; colons and labels stay; the end zeros stay but dim to a ghost so the word reads,
+   and the six letters glow a little brighter */
+.nuke__stack .nuke__end { transition: opacity .15s linear; }
+.nuke__stack.is-word .nuke__end { opacity: .2; }
+.nuke__stack.is-word .nuke__row b:not(.nuke__end) svg { filter: drop-shadow(0 0 .8px rgba(255, 255, 255, .9)) drop-shadow(0 0 10px rgba(255, 255, 255, .28)); }
 .nuke__stack .nuke__row[data-l]::after { content: attr(data-l); position: static; transform: none;
   font: 700 max(9px, .19em)/1 Archivo, sans-serif; letter-spacing: .3em; text-transform: uppercase; color: var(--fog); }
 /* colon: two chrome dots centred on the digit height */

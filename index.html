@@ -82,19 +82,23 @@
                 // Brady 2026-11-20: no grey dimming; the flicker ALTERNATES a digit between random numbers and its real value
                 // (e.g. 7 0 3 0) in a quick burst, staying full chrome, then settles on the real value.
                 const pick = () => 1 + Math.floor(Math.random() * 9);   // never 0, so every flip is visible
+                // Brady 2026-11-20 "more number flickering": two independent loops, a burst every 0.8-2 s from each (flickering about 60% of the time),
+                // 1-3 digits per burst, 3-5 random/real alternations
+                const busy = new Set();
                 const glitch = () => {
-                  const all = [...root.querySelectorAll('b')], n = 1 + Math.floor(Math.random() * Math.random() * 3.2);
+                  const all = [...root.querySelectorAll('b')].filter((b) => !busy.has(b)), n = 1 + Math.floor(Math.random() * 3);
                   const hit = all.sort(() => Math.random() - .5).slice(0, n);
-                  const phases = 2 * (2 + Math.floor(Math.random() * 3));   // 2-4 random/real alternations
+                  hit.forEach((b) => busy.add(b));
+                  const phases = 2 * (3 + Math.floor(Math.random() * 3));
                   let k = 0;
                   const step = () => {
                     hit.forEach((b) => { b.innerHTML = glyph(k % 2 === 0 ? pick() : +b.dataset.d, b.dataset.i); });
-                    if (++k < phases) setTimeout(step, 45 + Math.random() * 35); else hit.forEach(draw);
+                    if (++k < phases) setTimeout(step, 45 + Math.random() * 35); else hit.forEach((b) => { draw(b); busy.delete(b); });
                   };
-                  step();
-                  setTimeout(glitch, 900 + Math.random() * 2300);
+                  if (hit.length) step();
+                  setTimeout(glitch, 800 + Math.random() * 1200);
                 };
-                setTimeout(glitch, 900);
+                setTimeout(glitch, 500); setTimeout(glitch, 1100);
               })();
             </script>
           </div>

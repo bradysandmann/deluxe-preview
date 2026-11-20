@@ -101,7 +101,7 @@
                     const phases = 2 * (3 + Math.floor(Math.random() * 3));
                     let k = 0;
                     const step = () => {
-                      if (stack.classList.contains('is-word')) { hit.forEach((b) => { if (ends.includes(b)) show(b, ''); busy.delete(b); }); return; }
+                      if (stack.classList.contains('is-word')) { hit.forEach((b) => { show(b, real(b)); busy.delete(b); }); return; }
                       hit.forEach((b) => show(b, k % 2 === 0 ? pick() : real(b)));
                       if (++k < phases) setTimeout(step, 85 + Math.random() * 35); else hit.forEach((b) => { show(b, real(b)); busy.delete(b); });
                     };
@@ -110,18 +110,23 @@
                   setTimeout(glitch, 800 + Math.random() * 1200);
                 };
                 setTimeout(glitch, 500); setTimeout(glitch, 1100);
-                // Brady 2026-11-20 "can it like flicker DELUXE somehow", "excluding first and last number": every 7-11 s the six middle
-                // digits stutter into d E L U X E (the X uses two diagonals), hold, and stutter back; colons and labels fade meanwhile
-                // ALL CAPS (Brady: "make it all caps, it looks like it says deluxed"): capital D glyph, and the first and last digits go dark
-                // for the moment so the zeros are not read as letters
+                // DELUXE moment (Brady 2026-11-20): the six middle digits turn into D E L U X E in all caps (capital D = custom glyph with the logo's
+                // angled corners, X = two diagonals), IN PLACE: no sliding; colons, labels and the end zeros stay ("keep the 0s actually").
+                // "less structured, flicker slight": each letter flickers in on its own timing (letter, number, letter);
+                // "when it goes back to numbers it should go one at a time": the letters revert one by one in random order, each with the same slight flicker.
                 const WORD = ['efhijkl', 'adefg', 'def', 'bcdef', 'xy', 'adefg'];   // D E L U X E
                 const mid = digits.slice(1, 7), ends = [digits[0], digits[7]];
-                ends.forEach((b) => b.classList.add('nuke__end'));   // "make 0s disappear during that": the end digits vanish fully (CSS .is-word .nuke__end)
-                // Brady: "it's spazzing out and not clean, it's shrinking to fit", "it should remain cleanly, countdown and everything should stay":
-                // letters change IN PLACE (no sliding), colons and labels stay, one smooth fade in, a hold, one smooth fade out
-                const word = (on) => { stack.classList.toggle('is-word', on); mid.forEach((b, j) => show(b, on ? WORD[j] : real(b)));
-                  ends.forEach((b) => show(b, on ? '' : real(b))); };
-                const flash = () => { word(true); setTimeout(() => { word(false); setTimeout(flash, 3000 + Math.random() * 2000); }, 1300); };
+                const flick = (b, a, c) => { show(b, a); setTimeout(() => show(b, c), 50 + Math.random() * 40); setTimeout(() => show(b, a), 110 + Math.random() * 60); };
+                const flash = () => {
+                  stack.classList.add('is-word');
+                  busy.forEach((b) => show(b, real(b)));   // any number-flicker in flight snaps back first, so no stray digit shows
+                  mid.forEach((b, j) => setTimeout(() => flick(b, WORD[j], real(b)), Math.random() * 320));
+                  const order = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - .5);
+                  setTimeout(() => {
+                    order.forEach((j, n) => setTimeout(() => flick(mid[j], real(mid[j]), WORD[j]), n * (130 + Math.random() * 50)));
+                    setTimeout(() => { mid.forEach((b) => show(b, real(b))); stack.classList.remove('is-word'); setTimeout(flash, 3000 + Math.random() * 2000); }, 6 * 180 + 260);
+                  }, 1500);
+                };
                 setTimeout(flash, 2600);   // "make it happen more frequent": every 3-5 s
               })();
             </script>
